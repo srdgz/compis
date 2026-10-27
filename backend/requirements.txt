@@ -8,6 +8,6 @@ flask-cors>=5,<7
 flask-mail>=0.10,<1
 psycopg2-binary>=2.9,<3
 pydantic>=2.9,<3
-python-dotenv>=1.0
+python-dotenv>=1.2.4
 gunicorn>=23
 requests>=2.32,<3
