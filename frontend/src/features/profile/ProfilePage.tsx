@@ -3,12 +3,11 @@ import type { FormEvent } from "react";
 
 import { useAuth } from "@/features/auth/AuthProvider";
 import { isValidPaypalUsername } from "@/features/finance/paypal";
-import { fullName } from "@/features/roomies/api";
+import { AvatarEditor } from "./AvatarEditor";
 import type { Roomie } from "@/features/roomies/api";
 import { useCurrentRoomie, useDeactivateAccount, useUpdateProfile } from "@/features/roomies/hooks";
 import { errorMessage } from "@/shared/api/http";
 import { useDocumentTitle } from "@/shared/lib/useDocumentTitle";
-import { Avatar } from "@/shared/ui/Avatar";
 import { Button } from "@/shared/ui/Button";
 import { ConfirmDialog } from "@/shared/ui/Dialog";
 import { Card, ErrorNotice, Loading, PageHeader } from "@/shared/ui/Feedback";
@@ -157,13 +156,7 @@ export function ProfilePage() {
       {error && <ErrorNotice message={errorMessage(error)} />}
       {roomie && (
         <div className="flex flex-col gap-6">
-          <div className="flex items-center gap-4 rounded-card border border-line bg-surface p-5 shadow-card">
-            <Avatar name={roomie.first_name} size="xl" />
-            <div className="min-w-0">
-              <p className="break-words font-display text-2xl font-semibold">{fullName(roomie)}</p>
-              <p className="break-all text-muted">{roomie.email}</p>
-            </div>
-          </div>
+          <AvatarEditor roomie={roomie} />
           <ProfileForm key={roomie.id} roomie={roomie} />
           <DeleteAccount roomie={roomie} />
         </div>

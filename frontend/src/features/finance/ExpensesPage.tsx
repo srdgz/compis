@@ -217,6 +217,7 @@ export function ExpensesPage() {
                 debt={debt}
                 perspective="debtor"
                 otherName={nameOf(debt.roomie_paying_id)}
+                otherAvatar={byId.get(debt.roomie_paying_id)?.avatar}
                 busy={busyId === debt.id}
                 onPay={() => setPaying(debt)}
                 onConfirm={() => undefined}
@@ -235,6 +236,7 @@ export function ExpensesPage() {
                 debt={debt}
                 perspective="creditor"
                 otherName={nameOf(debt.roomie_debtor_id)}
+                otherAvatar={byId.get(debt.roomie_debtor_id)?.avatar}
                 busy={busyId === debt.id}
                 onPay={() => undefined}
                 onConfirm={() => confirmDebt(debt)}
@@ -259,6 +261,9 @@ export function ExpensesPage() {
                   debt={debt}
                   perspective={iAmDebtor ? "debtor" : "creditor"}
                   otherName={nameOf(iAmDebtor ? debt.roomie_paying_id : debt.roomie_debtor_id)}
+                  otherAvatar={
+                    byId.get(iAmDebtor ? debt.roomie_paying_id : debt.roomie_debtor_id)?.avatar
+                  }
                   busy={false}
                   onPay={() => undefined}
                   onConfirm={() => undefined}

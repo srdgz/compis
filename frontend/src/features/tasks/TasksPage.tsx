@@ -263,7 +263,7 @@ export function TasksPage() {
                 </p>
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted">
                   <span className="flex items-center gap-2">
-                    <Avatar name={assigneeName} size="sm" />
+                    <Avatar name={assigneeName} src={task.roomie?.avatar} size="sm" />
                     {task.roomie_id === roomie.id ? "Tú" : assigneeName}
                   </span>
                   <span>

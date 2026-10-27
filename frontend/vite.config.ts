@@ -16,6 +16,10 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: ["./src/test/setup.ts"],
     css: false,
-    env: { VITE_API_URL: "http://localhost/api" },
+    env: {
+      VITE_API_URL: "http://localhost/api",
+      VITE_CLOUDINARY_CLOUD_NAME: "demo",
+      VITE_CLOUDINARY_UPLOAD_PRESET: "preset",
+    },
   },
 });

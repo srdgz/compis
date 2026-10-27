@@ -55,7 +55,9 @@ export function DashboardPage() {
   const owe = (debts.data ?? [])
     .filter((d) => d.roomie_debtor_id === roomie.id)
     .reduce((sum, d) => sum + d.amount, 0);
-  const names = (roomies.data ?? []).map((r) => r.first_name);
+  const people = (roomies.data ?? []).map((r) => ({ name: r.first_name, avatar: r.avatar }));
+  const names = people.map((p) => p.name);
+  const avatarByName = new Map(people.map((p) => [p.name, p.avatar]));
 
   return (
     <>
@@ -66,7 +68,7 @@ export function DashboardPage() {
         actions={
           names.length > 0 && (
             <div className="flex items-center gap-3">
-              <AvatarStack names={names} />
+              <AvatarStack people={people} />
               <span className="text-muted">
                 {names.length} {names.length === 1 ? "persona" : "personas"} en casa
               </span>
@@ -167,7 +169,11 @@ export function DashboardPage() {
           <ul className="flex flex-col gap-4">
             {(activity.data ?? []).slice(0, 5).map((entry) => (
               <li key={entry.id} className="flex items-start gap-3">
-                <Avatar name={entry.roomie_name} size="sm" />
+                <Avatar
+                  name={entry.roomie_name}
+                  src={avatarByName.get(entry.roomie_name)}
+                  size="sm"
+                />
                 <div className="min-w-0">
                   <p>{entry.text}</p>
                   <p className="text-sm text-muted">{formatDateTime(entry.date)}</p>

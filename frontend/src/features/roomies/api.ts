@@ -20,6 +20,7 @@ export interface ProfileChanges {
   first_name?: string;
   last_name?: string;
   paypal_username?: string;
+  avatar?: string | null;
   password?: string;
 }
 

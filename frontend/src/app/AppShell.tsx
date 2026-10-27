@@ -75,7 +75,7 @@ function UserCard() {
   if (!roomie) return null;
   return (
     <div className="flex min-w-0 items-center gap-3">
-      <Avatar name={roomie.first_name} size="lg" />
+      <Avatar name={roomie.first_name} src={roomie.avatar} size="lg" />
       <div className="min-w-0">
         <p className="truncate font-bold">{fullName(roomie)}</p>
         <p className="truncate text-sm text-muted">{roomie.email}</p>
@@ -131,7 +131,7 @@ function MobileShell() {
         <Logo size={36} />
         {roomie && (
           <Link to="/profile" aria-label="Mi perfil" className="rounded-full">
-            <Avatar name={roomie.first_name} />
+            <Avatar name={roomie.first_name} src={roomie.avatar} />
           </Link>
         )}
       </header>

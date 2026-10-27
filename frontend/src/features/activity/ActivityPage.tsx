@@ -1,6 +1,7 @@
 import { Newspaper } from "lucide-react";
 
 import { useHomeContext } from "@/features/homes/context";
+import { useHomeRoomies } from "@/features/roomies/hooks";
 import { errorMessage } from "@/shared/api/http";
 import { formatDateTime } from "@/shared/lib/format";
 import { useDocumentTitle } from "@/shared/lib/useDocumentTitle";
@@ -13,6 +14,8 @@ export function ActivityPage() {
   useDocumentTitle("Novedades");
   const { homeId } = useHomeContext();
   const activity = useActivity(homeId);
+  const roomies = useHomeRoomies(homeId);
+  const avatarByName = new Map((roomies.data ?? []).map((r) => [r.first_name, r.avatar]));
 
   return (
     <>
@@ -34,7 +37,7 @@ export function ActivityPage() {
             key={entry.id}
             className="flex items-start gap-4 rounded-card border border-line bg-surface p-4 shadow-card"
           >
-            <Avatar name={entry.roomie_name} />
+            <Avatar name={entry.roomie_name} src={avatarByName.get(entry.roomie_name)} />
             <div className="min-w-0 flex-1">
               <p className="break-words font-semibold">{entry.text}</p>
               <p className="text-sm text-muted">

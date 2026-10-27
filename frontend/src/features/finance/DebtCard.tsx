@@ -60,6 +60,7 @@ interface DebtCardProps {
   debt: Debt;
   perspective: "debtor" | "creditor";
   otherName: string;
+  otherAvatar?: string | null;
   busy: boolean;
   onPay: () => void;
   onConfirm: () => void;
@@ -70,6 +71,7 @@ export function DebtCard({
   debt,
   perspective,
   otherName,
+  otherAvatar,
   busy,
   onPay,
   onConfirm,
@@ -82,7 +84,7 @@ export function DebtCard({
   return (
     <li className="flex flex-col gap-4 rounded-2xl border border-line bg-bg p-4">
       <div className="flex items-start gap-3">
-        <Avatar name={otherName} />
+        <Avatar name={otherName} src={otherAvatar} />
         <div className="min-w-0 flex-1">
           <p className="break-words font-semibold">{debt.name}</p>
           <p className="text-sm text-muted">

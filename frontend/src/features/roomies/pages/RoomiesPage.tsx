@@ -58,7 +58,7 @@ export function RoomiesPage() {
             className="flex flex-col gap-4 rounded-card border border-line bg-surface p-5 shadow-card"
           >
             <div className="flex items-center gap-4">
-              <Avatar name={member.first_name} size="lg" />
+              <Avatar name={member.first_name} src={member.avatar} size="lg" />
               <div className="min-w-0 flex-1">
                 <p className="break-words font-display text-xl font-semibold">
                   {fullName(member)}
