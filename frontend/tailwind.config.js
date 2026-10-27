@@ -10,6 +10,7 @@ export default {
         ink: token("ink"),
         muted: token("muted"),
         line: token("line"),
+        control: token("control"),
         brand: token("brand"),
         "on-brand": token("on-brand"),
         sun: token("sun"),

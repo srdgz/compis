@@ -20,6 +20,7 @@ import { useCurrentRoomie } from "@/features/roomies/hooks";
 import { cx } from "@/shared/lib/format";
 import { Button } from "@/shared/ui/Button";
 import { Logo } from "@/shared/ui/Logo";
+import { ThemeToggle } from "@/shared/ui/ThemeToggle";
 
 const NAV = [
   { to: "/", label: "Inicio", icon: Home, end: true },
@@ -59,7 +60,10 @@ export function AppShell() {
         Saltar al contenido
       </a>
 
-      <div className="border-b border-line bg-surface md:sticky md:top-0 md:h-screen md:border-b-0 md:border-r">
+      <aside
+        aria-label="Menú y cuenta"
+        className="border-b border-line bg-surface md:sticky md:top-0 md:h-screen md:border-b-0 md:border-r"
+      >
         <div className="flex items-center justify-between gap-3 px-4 py-3 md:px-6 md:py-6">
           <Logo />
           <button
@@ -103,13 +107,14 @@ export function AppShell() {
           </ul>
           <div className="mt-4 flex flex-col gap-3 border-t border-line pt-4 md:mt-auto">
             {roomie && <p className="px-3 text-sm text-muted">Sesión de {roomie.first_name}</p>}
+            <ThemeToggle />
             <Button variant="secondary" onClick={signOut}>
               <LogOut aria-hidden="true" size={18} />
               Cerrar sesión
             </Button>
           </div>
         </nav>
-      </div>
+      </aside>
 
       <main
         id="main"

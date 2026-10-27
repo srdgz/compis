@@ -72,7 +72,7 @@ export function DashboardPage() {
               </div>
               <div>
                 <dt className="text-muted">Te deben</dt>
-                <dd className="font-display text-3xl font-bold">{formatEuro(owed)}</dd>
+                <dd className="font-display text-3xl font-bold text-brand">{formatEuro(owed)}</dd>
               </div>
             </dl>
           )}

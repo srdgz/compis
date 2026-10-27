@@ -32,7 +32,7 @@ interface EmptyStateProps {
 
 export function EmptyState({ title, children }: EmptyStateProps) {
   return (
-    <div className="flex flex-col gap-2 rounded-card border-2 border-dashed border-line px-6 py-8">
+    <div className="flex flex-col gap-2 rounded-card bg-mint px-6 py-8">
       <p className="font-display text-lg font-bold">{title}</p>
       {children && <div className="text-muted">{children}</div>}
     </div>

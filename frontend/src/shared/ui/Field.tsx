@@ -38,7 +38,7 @@ function describedBy(id: string, hint?: string, error?: string): string | undefi
 }
 
 const CONTROL =
-  "min-h-11 w-full rounded-xl border-2 border-line bg-surface px-3 py-2 text-ink placeholder:text-muted focus-visible:border-brand";
+  "min-h-11 w-full rounded-xl border-2 border-control bg-surface px-3 py-2 text-ink placeholder:text-muted focus-visible:border-brand";
 
 interface TextFieldProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;

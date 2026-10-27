@@ -31,7 +31,7 @@ export function Button({
       disabled={disabled || loading}
       aria-busy={loading || undefined}
       className={cx(
-        "inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border-2 px-5 py-2 font-semibold transition",
+        "inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border-2 px-5 py-2 font-semibold transition-opacity",
         "disabled:cursor-not-allowed disabled:opacity-60",
         VARIANTS[variant],
         className,

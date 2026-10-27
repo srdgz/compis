@@ -11,6 +11,7 @@
   --ink: 17 48 47;
   --muted: 74 99 97;
   --line: 211 227 224;
+  --control: 98 124 122;
   --brand: 14 124 123;
   --on-brand: 255 255 255;
   --sun: 242 177 52;
@@ -19,13 +20,28 @@
   color-scheme: light;
 }
 
+:root[data-theme="dark"] {
+  --bg: 10 26 26;
+  --surface: 17 38 38;
+  --ink: 230 244 241;
+  --muted: 157 184 180;
+  --line: 36 64 64;
+  --control: 120 152 148;
+  --brand: 79 209 197;
+  --on-brand: 10 26 26;
+  --mint: 21 51 50;
+  --danger: 255 138 107;
+  color-scheme: dark;
+}
+
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --bg: 10 26 26;
     --surface: 17 38 38;
     --ink: 230 244 241;
     --muted: 157 184 180;
     --line: 36 64 64;
+    --control: 120 152 148;
     --brand: 79 209 197;
     --on-brand: 10 26 26;
     --mint: 21 51 50;
@@ -37,6 +53,7 @@
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
+    scroll-padding-block: 6rem;
   }
   body {
     @apply bg-bg font-sans text-base text-ink antialiased;
