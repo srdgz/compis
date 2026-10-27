@@ -51,7 +51,7 @@ export function CalendarPage() {
         <Button variant="secondary" onClick={() => shift(-1)} aria-label="Mes anterior">
           <ChevronLeft aria-hidden="true" />
         </Button>
-        <h2 className="text-2xl capitalize" aria-live="polite">
+        <h2 className="text-2xl first-letter:uppercase" aria-live="polite">
           {monthLabel}
         </h2>
         <Button variant="secondary" onClick={() => shift(1)} aria-label="Mes siguiente">
@@ -70,7 +70,7 @@ export function CalendarPage() {
       <div className="flex flex-col gap-6">
         {groups.map(([day, dayEvents]) => (
           <section key={day} aria-labelledby={`day-${day}`} className="flex flex-col gap-2">
-            <h3 id={`day-${day}`} className="text-lg capitalize">
+            <h3 id={`day-${day}`} className="text-lg first-letter:uppercase">
               {formatLongDay(day)}
             </h3>
             <ul className="flex flex-col gap-2">
