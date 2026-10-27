@@ -12,13 +12,22 @@ export function useExpensesWithoutDebts(roomieId: number | undefined) {
 
 export function useDebts(roomieId: number | undefined) {
   return useQuery({
-    queryKey: ["debts", roomieId],
+    queryKey: ["debts", roomieId, "open"],
     queryFn: () => financeApi.debts(roomieId!),
     enabled: typeof roomieId === "number",
   });
 }
 
-function useRefresh() {
+export function useSettledDebts(roomieId: number | undefined) {
+  return useQuery({
+    queryKey: ["debts", roomieId, "all"],
+    queryFn: () => financeApi.debts(roomieId!, true),
+    enabled: typeof roomieId === "number",
+    select: (debts) => debts.filter((debt) => debt.status === "Confirmada"),
+  });
+}
+
+export function useRefreshFinance() {
   const queryClient = useQueryClient();
   return () => {
     for (const key of ["expenses", "debts", "items", "activity", "calendar"]) {
@@ -28,7 +37,7 @@ function useRefresh() {
 }
 
 export function useCreateExpense() {
-  const refresh = useRefresh();
+  const refresh = useRefreshFinance();
   return useMutation({
     mutationFn: ({ name, itemIds }: { name: string; itemIds: number[] }) =>
       financeApi.createExpense(name, itemIds),
@@ -37,7 +46,7 @@ export function useCreateExpense() {
 }
 
 export function useCreateDebts() {
-  const refresh = useRefresh();
+  const refresh = useRefreshFinance();
   return useMutation({
     mutationFn: (input: { expenseId: number; debtorIds: number[]; totalAmount: number }) =>
       financeApi.createDebts(input.expenseId, input.debtorIds, input.totalAmount),
@@ -45,10 +54,27 @@ export function useCreateDebts() {
   });
 }
 
-export function usePayDebt() {
-  const refresh = useRefresh();
+export function useReportPayment() {
+  const refresh = useRefreshFinance();
   return useMutation({
-    mutationFn: (id: number) => financeApi.payDebt(id),
+    mutationFn: ({ id, method }: { id: number; method: "cash" | "paypal_me" }) =>
+      financeApi.reportPayment(id, method),
+    onSuccess: refresh,
+  });
+}
+
+export function useConfirmPayment() {
+  const refresh = useRefreshFinance();
+  return useMutation({
+    mutationFn: (id: number) => financeApi.confirmPayment(id),
+    onSuccess: refresh,
+  });
+}
+
+export function useRejectPayment() {
+  const refresh = useRefreshFinance();
+  return useMutation({
+    mutationFn: (id: number) => financeApi.rejectPayment(id),
     onSuccess: refresh,
   });
 }

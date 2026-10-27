@@ -9,6 +9,14 @@ export const expenseSchema = z.object({
   home_id: z.number(),
 });
 
+export const DEBT_STATUS = {
+  pending: "Pendiente",
+  paid: "Pagada",
+  confirmed: "Confirmada",
+} as const;
+
+export type PaymentMethod = "cash" | "paypal_me" | "paypal_sandbox";
+
 export const debtSchema = z.object({
   id: z.number(),
   name: z.string(),
@@ -16,6 +24,7 @@ export const debtSchema = z.object({
   roomie_debtor_id: z.number(),
   roomie_paying_id: z.number(),
   status: z.string(),
+  payment_method: z.string().nullable(),
   date: z.string(),
   expense_id: z.number(),
 });
@@ -28,12 +37,17 @@ export const financeApi = {
     request(`/expense/roomie/${roomieId}`, { schema: z.array(expenseSchema) }),
   createExpense: (name: string, itemIds: number[]) =>
     request("/expense", { method: "POST", body: { expense_name: name, item_ids: itemIds } }),
-  debts: (roomieId: number) =>
-    request(`/debts/roomie/${roomieId}`, { schema: z.array(debtSchema) }),
+  debts: (roomieId: number, includeSettled = false) =>
+    request(`/debts/roomie/${roomieId}${includeSettled ? "?include_settled=true" : ""}`, {
+      schema: z.array(debtSchema),
+    }),
   createDebts: (expenseId: number, debtorIds: number[], totalAmount: number) =>
     request("/debts", {
       method: "POST",
       body: { expense_id: expenseId, debtor_ids: debtorIds, total_amount: totalAmount },
     }),
-  payDebt: (id: number) => request(`/debts/${id}`, { method: "POST" }),
+  reportPayment: (id: number, method: "cash" | "paypal_me") =>
+    request(`/debts/${id}/report`, { method: "POST", body: { method } }),
+  confirmPayment: (id: number) => request(`/debts/${id}/confirm`, { method: "POST" }),
+  rejectPayment: (id: number) => request(`/debts/${id}/reject`, { method: "POST" }),
 };

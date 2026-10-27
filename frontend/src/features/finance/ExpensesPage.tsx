@@ -6,7 +6,7 @@ import { fullName } from "@/features/roomies/api";
 import type { Roomie } from "@/features/roomies/api";
 import { useHomeRoomies } from "@/features/roomies/hooks";
 import { errorMessage } from "@/shared/api/http";
-import { formatDay, formatEuro } from "@/shared/lib/format";
+import { formatEuro } from "@/shared/lib/format";
 import { useDocumentTitle } from "@/shared/lib/useDocumentTitle";
 import { Button } from "@/shared/ui/Button";
 import { Dialog } from "@/shared/ui/Dialog";
@@ -15,7 +15,16 @@ import { Card, EmptyState, ErrorNotice, Loading, PageHeader } from "@/shared/ui/
 import { useToast } from "@/shared/ui/Toast";
 
 import type { Debt, Expense } from "./api";
-import { useCreateDebts, useDebts, useExpensesWithoutDebts, usePayDebt } from "./hooks";
+import { DebtCard } from "./DebtCard";
+import {
+  useConfirmPayment,
+  useCreateDebts,
+  useDebts,
+  useExpensesWithoutDebts,
+  useRejectPayment,
+  useSettledDebts,
+} from "./hooks";
+import { PayDebtDialog } from "./PayDebtDialog";
 import { parseAmount, shareInCents } from "./split";
 
 function ShareDialog({
@@ -105,36 +114,6 @@ function ShareDialog({
   );
 }
 
-function DebtRow({
-  debt,
-  otherName,
-  actionLabel,
-  onPay,
-  loading,
-}: {
-  debt: Debt;
-  otherName: string;
-  actionLabel: string;
-  onPay: () => void;
-  loading: boolean;
-}) {
-  return (
-    <li className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-line px-4 py-3">
-      <div>
-        <p className="font-semibold">
-          {formatEuro(debt.amount)} · {debt.name}
-        </p>
-        <p className="text-muted">
-          {otherName} · {formatDay(debt.date)}
-        </p>
-      </div>
-      <Button variant="secondary" loading={loading} onClick={onPay}>
-        {actionLabel}
-      </Button>
-    </li>
-  );
-}
-
 export function ExpensesPage() {
   useDocumentTitle("Gastos y deudas");
   const { roomie, homeId } = useHomeContext();
@@ -142,18 +121,34 @@ export function ExpensesPage() {
   const roomies = useHomeRoomies(homeId);
   const expenses = useExpensesWithoutDebts(roomie.id);
   const debts = useDebts(roomie.id);
-  const pay = usePayDebt();
+  const settled = useSettledDebts(roomie.id);
+  const confirm = useConfirmPayment();
+  const reject = useRejectPayment();
   const [sharing, setSharing] = useState<Expense | null>(null);
+  const [paying, setPaying] = useState<Debt | null>(null);
 
-  const names = new Map((roomies.data ?? []).map((r) => [r.id, fullName(r)]));
-  const nameOf = (id: number) => names.get(id) ?? "Un compi";
+  const byId = new Map((roomies.data ?? []).map((r) => [r.id, r]));
+  const nameOf = (id: number) => {
+    const found = byId.get(id);
+    return found ? fullName(found) : "Un compi";
+  };
   const others = (roomies.data ?? []).filter((r) => r.id !== roomie.id);
   const iOwe = (debts.data ?? []).filter((d) => d.roomie_debtor_id === roomie.id);
   const owedToMe = (debts.data ?? []).filter((d) => d.roomie_paying_id === roomie.id);
+  const busyId =
+    (confirm.isPending ? confirm.variables : undefined) ??
+    (reject.isPending ? reject.variables : undefined);
 
-  function markPaid(debt: Debt, message: string) {
-    pay.mutate(debt.id, {
-      onSuccess: () => toast.success(message),
+  function confirmDebt(debt: Debt) {
+    confirm.mutate(debt.id, {
+      onSuccess: () => toast.success("Pago confirmado. La deuda queda saldada."),
+      onError: (caught) => toast.error(errorMessage(caught)),
+    });
+  }
+
+  function rejectDebt(debt: Debt) {
+    reject.mutate(debt.id, {
+      onSuccess: () => toast.success("Hemos devuelto la deuda a pendiente."),
       onError: (caught) => toast.error(errorMessage(caught)),
     });
   }
@@ -189,16 +184,19 @@ export function ExpensesPage() {
       <div className="grid gap-6 md:grid-cols-2">
         <Card title="Debes">
           {debts.isPending && <Loading />}
+          {debts.error && <ErrorNotice message={errorMessage(debts.error)} />}
           {debts.data && iOwe.length === 0 && <EmptyState title="No debes nada" />}
           <ul className="flex flex-col gap-3">
             {iOwe.map((debt) => (
-              <DebtRow
+              <DebtCard
                 key={debt.id}
                 debt={debt}
-                otherName={`A ${nameOf(debt.roomie_paying_id)}`}
-                actionLabel="Marcar como pagada"
-                loading={pay.isPending && pay.variables === debt.id}
-                onPay={() => markPaid(debt, "Deuda marcada como pagada.")}
+                perspective="debtor"
+                otherName={nameOf(debt.roomie_paying_id)}
+                busy={busyId === debt.id}
+                onPay={() => setPaying(debt)}
+                onConfirm={() => undefined}
+                onReject={() => undefined}
               />
             ))}
           </ul>
@@ -208,24 +206,57 @@ export function ExpensesPage() {
           {debts.data && owedToMe.length === 0 && <EmptyState title="Nadie te debe nada" />}
           <ul className="flex flex-col gap-3">
             {owedToMe.map((debt) => (
-              <DebtRow
+              <DebtCard
                 key={debt.id}
                 debt={debt}
-                otherName={`De ${nameOf(debt.roomie_debtor_id)}`}
-                actionLabel="Marcar como cobrada"
-                loading={pay.isPending && pay.variables === debt.id}
-                onPay={() => markPaid(debt, "Deuda marcada como cobrada.")}
+                perspective="creditor"
+                otherName={nameOf(debt.roomie_debtor_id)}
+                busy={busyId === debt.id}
+                onPay={() => undefined}
+                onConfirm={() => confirmDebt(debt)}
+                onReject={() => rejectDebt(debt)}
               />
             ))}
           </ul>
         </Card>
       </div>
 
+      {settled.data && settled.data.length > 0 && (
+        <details className="rounded-card border border-line bg-surface p-4">
+          <summary className="min-h-11 cursor-pointer py-2 font-semibold">
+            Deudas saldadas ({settled.data.length})
+          </summary>
+          <ul className="mt-3 flex flex-col gap-3">
+            {settled.data.map((debt) => {
+              const iAmDebtor = debt.roomie_debtor_id === roomie.id;
+              return (
+                <DebtCard
+                  key={debt.id}
+                  debt={debt}
+                  perspective={iAmDebtor ? "debtor" : "creditor"}
+                  otherName={nameOf(iAmDebtor ? debt.roomie_paying_id : debt.roomie_debtor_id)}
+                  busy={false}
+                  onPay={() => undefined}
+                  onConfirm={() => undefined}
+                  onReject={() => undefined}
+                />
+              );
+            })}
+          </ul>
+        </details>
+      )}
+
       <ShareDialog
         key={sharing?.id ?? "none"}
         expense={sharing}
         others={others}
         onClose={() => setSharing(null)}
+      />
+      <PayDebtDialog
+        key={paying?.id ?? "none"}
+        debt={paying}
+        creditor={paying ? byId.get(paying.roomie_paying_id) : undefined}
+        onClose={() => setPaying(null)}
       />
     </>
   );

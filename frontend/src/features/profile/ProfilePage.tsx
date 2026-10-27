@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { FormEvent } from "react";
 
 import { useAuth } from "@/features/auth/AuthProvider";
+import { isValidPaypalUsername } from "@/features/finance/paypal";
 import type { Roomie } from "@/features/roomies/api";
 import { useCurrentRoomie, useDeactivateAccount, useUpdateProfile } from "@/features/roomies/hooks";
 import { errorMessage } from "@/shared/api/http";
@@ -12,6 +13,8 @@ import { TextField } from "@/shared/ui/Field";
 import { Card, ErrorNotice, Loading, PageHeader } from "@/shared/ui/Feedback";
 import { useToast } from "@/shared/ui/Toast";
 
+const PAYPAL_LINK_PREFIX = /^(?:https?:\/\/)?(?:www\.)?paypal\.me\//i;
+
 function ProfileForm({ roomie }: { roomie: Roomie }) {
   const toast = useToast();
   const update = useUpdateProfile();
@@ -20,6 +23,7 @@ function ProfileForm({ roomie }: { roomie: Roomie }) {
   const [paypal, setPaypal] = useState(roomie.paypal_username ?? "");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [paypalError, setPaypalError] = useState<string | undefined>();
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -31,12 +35,18 @@ function ProfileForm({ roomie }: { roomie: Roomie }) {
       setError("La nueva contraseña debe tener al menos 8 caracteres.");
       return;
     }
+    const paypalUsername = paypal.trim().replace(PAYPAL_LINK_PREFIX, "").split("/")[0] ?? "";
+    if (paypalUsername && !isValidPaypalUsername(paypalUsername)) {
+      setPaypalError("Usa entre 3 y 20 letras o números, sin espacios.");
+      return;
+    }
     setError(null);
+    setPaypalError(undefined);
     update.mutate(
       {
         first_name: firstName.trim(),
         last_name: lastName.trim(),
-        paypal_username: paypal.trim(),
+        paypal_username: paypalUsername,
         ...(password ? { password } : {}),
       },
       {
@@ -69,7 +79,8 @@ function ProfileForm({ roomie }: { roomie: Roomie }) {
         />
         <TextField
           label="Usuario de PayPal.Me"
-          hint="Solo el nombre de usuario, por ejemplo «lucia». Lo usarán tus compis para pagarte."
+          hint="Tu nombre de usuario de paypal.me, por ejemplo «lucia». También puedes pegar el enlace completo. Tus compis lo usarán para pagarte."
+          error={paypalError}
           value={paypal}
           onChange={(event) => setPaypal(event.target.value)}
         />
