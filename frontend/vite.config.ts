@@ -9,10 +9,11 @@ export default defineConfig({
   },
   server: {
     port: 3000,
-    proxy: { "/api": "http://localhost:5000" },
+    proxy: { "/api": process.env.VITE_PROXY_TARGET ?? "http://localhost:5000" },
   },
   test: {
     globals: true,
+    include: ["src/**/*.test.{ts,tsx}"],
     environment: "jsdom",
     setupFiles: ["./src/test/setup.ts"],
     css: false,
