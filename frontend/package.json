@@ -48,7 +48,7 @@
     "postcss": "^8.5.32",
     "prettier": "^3.9.10",
     "sharp": "^0.35.5",
-    "tailwindcss": "^3.4.19",
+    "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.72.1",
     "vite": "^8.3.5",
