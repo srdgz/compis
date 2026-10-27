@@ -29,13 +29,27 @@ jobs:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
       JWT_SECRET_KEY: migration-only-this-value-is-never-used-by-the-app
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Check the database secret
+        id: gate
+        working-directory: ${{ github.workspace }}
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::DATABASE_URL is not set in the production environment, skipping."
+          else
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          fi
+      - if: steps.gate.outputs.configured == 'true'
+        uses: actions/checkout@v4
+      - if: steps.gate.outputs.configured == 'true'
+        uses: actions/setup-python@v5
         with:
           python-version: "3.12"
           cache: pip
           cache-dependency-path: backend/requirements.txt
-      - run: pip install -r requirements.txt
-      - run: flask --app compis.bootstrap:create_app db upgrade
-      - if: github.event_name == 'schedule' || inputs.reset_demo
+      - if: steps.gate.outputs.configured == 'true'
+        run: pip install -r requirements.txt
+      - if: steps.gate.outputs.configured == 'true'
+        run: flask --app compis.bootstrap:create_app db upgrade
+      - if: steps.gate.outputs.configured == 'true' && (github.event_name == 'schedule' || inputs.reset_demo)
         run: flask --app compis.bootstrap:create_app reset-demo
