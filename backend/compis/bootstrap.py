@@ -6,6 +6,7 @@ from flask_mail import Mail
 from compis.application.container import build_services
 from compis.application.ports import Clock, Mailer, PaymentGateway
 from compis.config import Settings
+from compis.domain.avatar import media_prefix
 from compis.infrastructure.adapters import (
     BcryptPasswordHasher,
     FlaskMailMailer,
@@ -65,6 +66,7 @@ def create_app(
         settings.cron_secret,
         gateway,
         settings.paypal_demo_client_id,
+        media_prefix(settings.cloudinary_cloud_name),
     )
     register_http(app)
     register_cli(app)

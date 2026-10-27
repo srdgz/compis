@@ -40,18 +40,19 @@ def build_services(
     cron_secret: str = "",
     gateway: PaymentGateway | None = None,
     paypal_demo_client_id: str | None = None,
+    media_prefix: str | None = None,
 ) -> Services:
     activity = ActivityService(uow, clock)
     debts = DebtService(uow, clock, activity)
     return Services(
         auth=AuthService(uow, hasher),
-        roomies=RoomieService(uow, hasher),
+        roomies=RoomieService(uow, hasher, media_prefix),
         homes=HomeService(uow, activity),
         tasks=TaskService(uow, clock, activity),
         shopping=ShoppingService(uow, activity),
         expenses=ExpenseService(uow, activity),
         debts=debts,
-        files=FileService(uow, clock, activity),
+        files=FileService(uow, clock, activity, media_prefix),
         activity=activity,
         calendar=CalendarService(uow),
         digest=DigestService(uow, clock, mailer),

@@ -6,7 +6,14 @@ from compis.domain.errors import NotFoundError, ValidationError
 
 
 class FileService:
-    def __init__(self, uow: UnitOfWork, clock: Clock, activity: ActivityService) -> None:
+    def __init__(
+        self,
+        uow: UnitOfWork,
+        clock: Clock,
+        activity: ActivityService,
+        media_prefix: str | None = None,
+    ) -> None:
+        self._media_prefix = media_prefix
         self._uow = uow
         self._clock = clock
         self._activity = activity
@@ -28,6 +35,8 @@ class FileService:
         require_member(actor, home_id)
         if not name.strip() or not url.startswith("https://"):
             raise ValidationError("Faltan campos por completar")
+        if self._media_prefix and not url.startswith(self._media_prefix):
+            raise ValidationError("El archivo debe subirse desde la propia aplicación")
         if expense_id is not None:
             expense = self._uow.expenses.get(expense_id)
             if expense is None or expense.home_id != home_id:

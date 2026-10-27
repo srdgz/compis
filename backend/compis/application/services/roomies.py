@@ -14,7 +14,10 @@ UNSET = object()
 
 
 class RoomieService:
-    def __init__(self, uow: UnitOfWork, hasher: PasswordHasher) -> None:
+    def __init__(
+        self, uow: UnitOfWork, hasher: PasswordHasher, media_prefix: str | None = None
+    ) -> None:
+        self._media_prefix = media_prefix
         self._uow = uow
         self._hasher = hasher
 
@@ -49,7 +52,9 @@ class RoomieService:
         if last_name is not UNSET:
             actor.last_name = last_name if isinstance(last_name, str) else None
         if avatar is not UNSET:
-            actor.avatar = normalise_avatar_url(avatar if isinstance(avatar, str) else None)
+            actor.avatar = normalise_avatar_url(
+                avatar if isinstance(avatar, str) else None, self._media_prefix
+            )
         if paypal_username is not UNSET:
             actor.paypal_username = normalise_paypal_username(
                 paypal_username if isinstance(paypal_username, str) else None

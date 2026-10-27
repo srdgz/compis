@@ -32,6 +32,7 @@ class Settings:
     cron_secret: str = ""
     paypal_demo_client_id: str = ""
     paypal_demo_client_secret: str = ""
+    cloudinary_cloud_name: str = ""
     testing: bool = False
 
     @classmethod
@@ -55,4 +56,5 @@ class Settings:
             cron_secret=os.getenv("CRON_SECRET", ""),
             paypal_demo_client_id=os.getenv("PAYPAL_DEMO_CLIENT_ID", ""),
             paypal_demo_client_secret=os.getenv("PAYPAL_DEMO_CLIENT_SECRET", ""),
+            cloudinary_cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME", ""),
         )
