@@ -5,6 +5,7 @@ from compis.application.access import (
     require_member,
 )
 from compis.application.ports import PasswordHasher, UnitOfWork
+from compis.domain.avatar import normalise_avatar_url
 from compis.domain.entities import Roomie
 from compis.domain.errors import PermissionDeniedError, ValidationError
 from compis.domain.paypal import normalise_paypal_username
@@ -48,7 +49,7 @@ class RoomieService:
         if last_name is not UNSET:
             actor.last_name = last_name if isinstance(last_name, str) else None
         if avatar is not UNSET:
-            actor.avatar = avatar if isinstance(avatar, str) else None
+            actor.avatar = normalise_avatar_url(avatar if isinstance(avatar, str) else None)
         if paypal_username is not UNSET:
             actor.paypal_username = normalise_paypal_username(
                 paypal_username if isinstance(paypal_username, str) else None

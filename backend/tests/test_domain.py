@@ -2,6 +2,7 @@ from datetime import date
 
 import pytest
 
+from compis.domain.avatar import normalise_avatar_url
 from compis.domain.entities import Debt, DebtStatus
 from compis.domain.errors import ConflictError, PermissionDeniedError, ValidationError
 from compis.domain.money import format_euros, split_equally, to_cents, to_euros
@@ -111,3 +112,35 @@ def test_paypal_username_normalisation(raw, expected):
 def test_paypal_username_rejects_invalid_values(raw):
     with pytest.raises(ValidationError):
         normalise_paypal_username(raw)
+
+
+@pytest.mark.parametrize(
+    ("raw", "expected"),
+    [
+        (
+            "https://res.cloudinary.com/demo/image/upload/v1/me.jpg",
+            "https://res.cloudinary.com/demo/image/upload/v1/me.jpg",
+        ),
+        ("  https://example.com/a.png  ", "https://example.com/a.png"),
+        ("", None),
+        ("   ", None),
+        (None, None),
+    ],
+)
+def test_avatar_url_normalisation(raw, expected):
+    assert normalise_avatar_url(raw) == expected
+
+
+@pytest.mark.parametrize(
+    "raw",
+    [
+        "http://example.com/a.png",
+        "javascript:alert(1)",
+        "data:image/png;base64,AAAA",
+        "not a url",
+        "https://" + "a" * 300,
+    ],
+)
+def test_avatar_url_rejects_unsafe_values(raw):
+    with pytest.raises(ValidationError):
+        normalise_avatar_url(raw)

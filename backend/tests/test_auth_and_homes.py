@@ -113,3 +113,20 @@ def test_account_deletion_requires_leaving_the_home(flat, register):
         "/api/login", json={"email": "nuria@example.com", "password": "password-123"}
     )
     assert response.status_code == 401
+
+
+def test_a_roomie_can_set_and_remove_a_profile_picture(flat):
+    marcos = flat["marcos"]
+    url = "https://res.cloudinary.com/demo/image/upload/v1/marcos.jpg"
+    updated = marcos.put(f"/api/roomie/{marcos.id}", json={"avatar": url})
+    assert updated.get_json()["avatar"] == url
+    teammate = flat["owner"].get(f"/api/roomie/{marcos.id}").get_json()
+    assert teammate["avatar"] == url
+
+    bad = marcos.put(f"/api/roomie/{marcos.id}", json={"avatar": "javascript:alert(1)"})
+    assert bad.status_code == 400
+    insecure = marcos.put(f"/api/roomie/{marcos.id}", json={"avatar": "http://example.com/a.png"})
+    assert insecure.status_code == 400
+
+    removed = marcos.put(f"/api/roomie/{marcos.id}", json={"avatar": None})
+    assert removed.get_json()["avatar"] is None
