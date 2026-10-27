@@ -1,6 +1,8 @@
 from datetime import timedelta
 
-from compis.interfaces.cli import DEMO_PASSWORD, seed_demo
+from compis.infrastructure.db.extensions import db
+from compis.infrastructure.db.models import HomeRow, RoomieRow
+from compis.interfaces.cli import DEMO_PASSWORD, reset_demo, seed_demo
 
 
 def test_health(client):
@@ -39,4 +41,30 @@ def test_demo_seed_creates_a_usable_flat(app, client):
     headers = {"Authorization": f"Bearer {token}"}
     assert response.get_json()["home_id"] == home_id
     tasks = client.get(f"/api/task/home/{home_id}", headers=headers).get_json()
-    assert len(tasks) == 3
+    assert len(tasks) == 4
+    debts = client.get("/api/debts/roomie/1", headers=headers).get_json()
+    owed_to_lucia = [d for d in debts if d["roomie_paying_id"] == 1]
+    lucia_owes = [d for d in debts if d["roomie_debtor_id"] == 1]
+    assert len(owed_to_lucia) == 2
+    assert [d["amount"] for d in lucia_owes] == [14.0]
+
+
+def test_resetting_the_demo_replaces_only_demo_data(app, client, register):
+    outsider = register("Nuria")
+    outsider_home = outsider.post("/api/home", json={"name": "Mi piso"}).get_json()["home_id"]
+    seed_demo(app.extensions["compis"])
+
+    reset_demo(db.session)
+    second_home = seed_demo(app.extensions["compis"])
+
+    demo_roomies = (
+        db.session.query(RoomieRow).filter(RoomieRow.email.like("%@demo.compis.app")).count()
+    )
+    assert demo_roomies == 3
+    assert db.session.query(HomeRow).count() == 2
+    login = client.post(
+        "/api/login", json={"email": "marcos@demo.compis.app", "password": DEMO_PASSWORD}
+    )
+    assert login.status_code == 200
+    assert login.get_json()["home_id"] == second_home
+    assert outsider.get(f"/api/home/{outsider_home}").get_json()["name"] == "Mi piso"
