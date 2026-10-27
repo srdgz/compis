@@ -5,10 +5,10 @@ import { cx } from "@/shared/lib/format";
 type Variant = "primary" | "secondary" | "ghost" | "danger";
 
 const VARIANTS: Record<Variant, string> = {
-  primary: "bg-brand text-on-brand border-brand hover:opacity-90",
-  secondary: "bg-transparent text-ink border-ink hover:bg-mint",
-  ghost: "bg-transparent text-ink border-transparent hover:bg-mint",
-  danger: "bg-transparent text-danger border-danger hover:bg-mint",
+  primary: "border-brand bg-brand text-on-brand shadow-sm hover:opacity-90",
+  secondary: "border-transparent bg-mint text-ink hover:bg-line",
+  ghost: "border-transparent bg-transparent text-ink hover:bg-mint",
+  danger: "border-danger bg-surface text-danger hover:bg-mint",
 };
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -31,7 +31,7 @@ export function Button({
       disabled={disabled || loading}
       aria-busy={loading || undefined}
       className={cx(
-        "inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border-2 px-5 py-2 font-semibold transition-opacity",
+        "inline-flex min-h-11 items-center justify-center gap-2 rounded-full border-2 px-5 py-2 font-semibold transition-opacity",
         "disabled:cursor-not-allowed disabled:opacity-60",
         VARIANTS[variant],
         className,
@@ -42,3 +42,9 @@ export function Button({
     </button>
   );
 }
+
+export const linkButtonClass = (variant: Variant = "primary") =>
+  cx(
+    "inline-flex min-h-11 items-center justify-center gap-2 rounded-full border-2 px-5 py-2 font-semibold transition-opacity",
+    VARIANTS[variant],
+  );

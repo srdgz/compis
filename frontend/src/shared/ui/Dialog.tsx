@@ -36,10 +36,10 @@ export function Dialog({ open, title, onClose, children }: DialogProps) {
       ref={ref}
       aria-labelledby={titleId}
       onClose={onClose}
-      className="m-auto w-[calc(100%-2rem)] max-w-lg rounded-card border border-line bg-surface p-0 text-ink shadow-xl"
+      className="m-auto max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-lg overflow-y-auto overscroll-contain rounded-sheet bg-surface p-0 text-ink shadow-pop max-sm:mb-0 max-sm:mt-auto max-sm:max-h-[92dvh] max-sm:w-full max-sm:max-w-none max-sm:rounded-b-none"
     >
       {open && (
-        <div className="flex flex-col gap-5 p-6">
+        <div className="flex flex-col gap-5 p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
           <h2 id={titleId} className="text-2xl">
             {title}
           </h2>

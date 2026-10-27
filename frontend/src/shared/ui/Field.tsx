@@ -1,4 +1,5 @@
-import { useId } from "react";
+import { Eye, EyeOff } from "lucide-react";
+import { useId, useState } from "react";
 import type { InputHTMLAttributes, ReactNode, SelectHTMLAttributes } from "react";
 
 import { cx } from "@/shared/lib/format";
@@ -38,7 +39,7 @@ function describedBy(id: string, hint?: string, error?: string): string | undefi
 }
 
 const CONTROL =
-  "min-h-11 w-full rounded-xl border-2 border-control bg-surface px-3 py-2 text-ink placeholder:text-muted focus-visible:border-brand";
+  "min-h-12 w-full rounded-2xl border-2 border-control bg-surface px-4 py-2 text-ink placeholder:text-muted focus-visible:border-brand";
 
 interface TextFieldProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
@@ -57,6 +58,41 @@ export function TextField({ label, hint, error, className, ...rest }: TextFieldP
         className={cx(CONTROL, error && "border-danger", className)}
         {...rest}
       />
+    </FieldShell>
+  );
+}
+
+export function PasswordField({
+  label,
+  hint,
+  error,
+  className,
+  ...rest
+}: Omit<TextFieldProps, "type">) {
+  const id = useId();
+  const [visible, setVisible] = useState(false);
+  return (
+    <FieldShell id={id} label={label} hint={hint} error={error}>
+      <div className="relative">
+        <input
+          id={id}
+          type={visible ? "text" : "password"}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={describedBy(id, hint, error)}
+          className={cx(CONTROL, "pr-14", error && "border-danger", className)}
+          {...rest}
+        />
+        <button
+          type="button"
+          aria-pressed={visible}
+          aria-controls={id}
+          aria-label="Mostrar contraseña"
+          onClick={() => setVisible((current) => !current)}
+          className="absolute right-1 top-1/2 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full text-muted hover:bg-mint"
+        >
+          {visible ? <EyeOff aria-hidden="true" size={20} /> : <Eye aria-hidden="true" size={20} />}
+        </button>
+      </div>
     </FieldShell>
   );
 }

@@ -18,10 +18,15 @@ export default {
         danger: token("danger"),
       },
       fontFamily: {
-        display: ["Bricolage Grotesque Variable", "Trebuchet MS", "sans-serif"],
+        display: ["Fraunces Variable", "Georgia", "serif"],
         sans: ["Figtree Variable", "system-ui", "sans-serif"],
       },
-      borderRadius: { card: "1.25rem" },
+      borderRadius: { card: "1.5rem", sheet: "1.75rem" },
+      boxShadow: {
+        card: "0 1px 2px rgb(var(--ink) / 0.05), 0 12px 28px -16px rgb(var(--ink) / 0.18)",
+        pop: "0 20px 50px -20px rgb(var(--ink) / 0.35)",
+      },
+      screens: { xs: "420px" },
     },
   },
   plugins: [],

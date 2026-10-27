@@ -20,7 +20,7 @@ export function Logo({ size = 40 }: { size?: number }) {
   return (
     <span className="inline-flex items-center gap-2">
       <LogoMark size={size} />
-      <span className="font-display text-2xl font-extrabold tracking-tight">compis</span>
+      <span className="font-display text-2xl font-semibold tracking-tight">compis</span>
     </span>
   );
 }
