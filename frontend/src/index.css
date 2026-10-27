@@ -1,0 +1,145 @@
+@import "@fontsource-variable/fraunces";
+@import "@fontsource-variable/figtree";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: 245 250 249;
+  --surface: 255 255 255;
+  --ink: 17 48 47;
+  --muted: 74 99 97;
+  --line: 211 227 224;
+  --control: 98 124 122;
+  --brand: 14 124 123;
+  --on-brand: 255 255 255;
+  --sun: 242 177 52;
+  --mint: 216 241 236;
+  --danger: 179 54 27;
+  --av1-bg: 255 224 178;
+  --av1-fg: 94 53 0;
+  --av2-bg: 200 230 255;
+  --av2-fg: 10 60 110;
+  --av3-bg: 215 245 215;
+  --av3-fg: 20 80 30;
+  --av4-bg: 255 210 220;
+  --av4-fg: 120 20 50;
+  --av5-bg: 225 215 255;
+  --av5-fg: 60 30 120;
+  --av6-bg: 255 235 160;
+  --av6-fg: 80 60 0;
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --bg: 10 26 26;
+  --surface: 17 38 38;
+  --ink: 230 244 241;
+  --muted: 157 184 180;
+  --line: 36 64 64;
+  --control: 120 152 148;
+  --brand: 79 209 197;
+  --on-brand: 10 26 26;
+  --mint: 21 51 50;
+  --danger: 255 138 107;
+  --av1-bg: 150 92 24;
+  --av1-fg: 255 255 255;
+  --av2-bg: 38 98 168;
+  --av2-fg: 255 255 255;
+  --av3-bg: 34 115 58;
+  --av3-fg: 255 255 255;
+  --av4-bg: 170 44 88;
+  --av4-fg: 255 255 255;
+  --av5-bg: 110 82 190;
+  --av5-fg: 255 255 255;
+  --av6-bg: 140 108 10;
+  --av6-fg: 255 255 255;
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: 10 26 26;
+    --surface: 17 38 38;
+    --ink: 230 244 241;
+    --muted: 157 184 180;
+    --line: 36 64 64;
+    --control: 120 152 148;
+    --brand: 79 209 197;
+    --on-brand: 10 26 26;
+    --mint: 21 51 50;
+    --danger: 255 138 107;
+    --av1-bg: 150 92 24;
+    --av1-fg: 255 255 255;
+    --av2-bg: 38 98 168;
+    --av2-fg: 255 255 255;
+    --av3-bg: 34 115 58;
+    --av3-fg: 255 255 255;
+    --av4-bg: 170 44 88;
+    --av4-fg: 255 255 255;
+    --av5-bg: 110 82 190;
+    --av5-fg: 255 255 255;
+    --av6-bg: 140 108 10;
+    --av6-fg: 255 255 255;
+    color-scheme: dark;
+  }
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-block: 6rem;
+  }
+  body {
+    @apply bg-bg font-sans text-base text-ink antialiased;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-display font-semibold tracking-tight;
+  }
+  :focus-visible {
+    outline: 3px solid rgb(var(--brand));
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+.avatar-tone-1 {
+  background-color: rgb(var(--av1-bg));
+  color: rgb(var(--av1-fg));
+}
+.avatar-tone-2 {
+  background-color: rgb(var(--av2-bg));
+  color: rgb(var(--av2-fg));
+}
+.avatar-tone-3 {
+  background-color: rgb(var(--av3-bg));
+  color: rgb(var(--av3-fg));
+}
+.avatar-tone-4 {
+  background-color: rgb(var(--av4-bg));
+  color: rgb(var(--av4-fg));
+}
+.avatar-tone-5 {
+  background-color: rgb(var(--av5-bg));
+  color: rgb(var(--av5-fg));
+}
+.avatar-tone-6 {
+  background-color: rgb(var(--av6-bg));
+  color: rgb(var(--av6-fg));
+}
+
+dialog::backdrop {
+  background: rgb(10 26 26 / 0.6);
+}

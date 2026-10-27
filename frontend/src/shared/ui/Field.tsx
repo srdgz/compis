@@ -1,0 +1,147 @@
+import { Eye, EyeOff } from "lucide-react";
+import { useId, useState } from "react";
+import type { InputHTMLAttributes, ReactNode, SelectHTMLAttributes } from "react";
+
+import { cx } from "@/shared/lib/format";
+
+interface FieldShellProps {
+  id: string;
+  label: string;
+  hint?: string;
+  error?: string;
+  children: ReactNode;
+}
+
+function FieldShell({ id, label, hint, error, children }: FieldShellProps) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <label htmlFor={id} className="font-semibold">
+        {label}
+      </label>
+      {hint && (
+        <p id={`${id}-hint`} className="text-sm text-muted">
+          {hint}
+        </p>
+      )}
+      {children}
+      {error && (
+        <p id={`${id}-error`} className="text-sm font-semibold text-danger">
+          {error}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function describedBy(id: string, hint?: string, error?: string): string | undefined {
+  const ids = [hint && `${id}-hint`, error && `${id}-error`].filter(Boolean);
+  return ids.length ? ids.join(" ") : undefined;
+}
+
+const CONTROL =
+  "min-h-12 w-full rounded-2xl border-2 border-control bg-surface px-4 py-2 text-ink placeholder:text-muted focus-visible:border-brand";
+
+interface TextFieldProps extends InputHTMLAttributes<HTMLInputElement> {
+  label: string;
+  hint?: string;
+  error?: string;
+}
+
+export function TextField({ label, hint, error, className, ...rest }: TextFieldProps) {
+  const id = useId();
+  return (
+    <FieldShell id={id} label={label} hint={hint} error={error}>
+      <input
+        id={id}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={describedBy(id, hint, error)}
+        className={cx(CONTROL, error && "border-danger", className)}
+        {...rest}
+      />
+    </FieldShell>
+  );
+}
+
+export function PasswordField({
+  label,
+  hint,
+  error,
+  className,
+  ...rest
+}: Omit<TextFieldProps, "type">) {
+  const id = useId();
+  const [visible, setVisible] = useState(false);
+  return (
+    <FieldShell id={id} label={label} hint={hint} error={error}>
+      <div className="relative">
+        <input
+          id={id}
+          type={visible ? "text" : "password"}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={describedBy(id, hint, error)}
+          className={cx(CONTROL, "pr-14", error && "border-danger", className)}
+          {...rest}
+        />
+        <button
+          type="button"
+          aria-pressed={visible}
+          aria-controls={id}
+          aria-label="Mostrar contraseña"
+          onClick={() => setVisible((current) => !current)}
+          className="absolute right-1 top-1/2 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full text-muted hover:bg-mint"
+        >
+          {visible ? <EyeOff aria-hidden="true" size={20} /> : <Eye aria-hidden="true" size={20} />}
+        </button>
+      </div>
+    </FieldShell>
+  );
+}
+
+interface SelectFieldProps extends SelectHTMLAttributes<HTMLSelectElement> {
+  label: string;
+  hint?: string;
+  error?: string;
+}
+
+export function SelectField({
+  label,
+  hint,
+  error,
+  className,
+  children,
+  ...rest
+}: SelectFieldProps) {
+  const id = useId();
+  return (
+    <FieldShell id={id} label={label} hint={hint} error={error}>
+      <select
+        id={id}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={describedBy(id, hint, error)}
+        className={cx(CONTROL, error && "border-danger", className)}
+        {...rest}
+      >
+        {children}
+      </select>
+    </FieldShell>
+  );
+}
+
+interface CheckboxProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "type"> {
+  label: string;
+}
+
+export function Checkbox({ label, className, ...rest }: CheckboxProps) {
+  const id = useId();
+  return (
+    <div className="flex min-h-11 items-center gap-3">
+      <input
+        id={id}
+        type="checkbox"
+        className={cx("h-6 w-6 shrink-0 accent-brand", className)}
+        {...rest}
+      />
+      <label htmlFor={id}>{label}</label>
+    </div>
+  );
+}

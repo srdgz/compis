@@ -1,16 +1,1 @@
-flask
-sqlalchemy==1.4.46
-flask-sqlalchemy
-flask-migrate
-flask-swagger
-psycopg2-binary
-python-dotenv
-flask-cors
-gunicorn
-cloudinary
-flask-admin
-typing-extensions
-flask-jwt-extended
-flask-bcrypt
-flask-mail
-flask-apscheduler
+-r backend/requirements.txt
