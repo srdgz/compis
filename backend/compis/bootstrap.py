@@ -31,6 +31,7 @@ def create_app(
     app.url_map.strict_slashes = False
     app.config["SQLALCHEMY_DATABASE_URI"] = settings.database_url
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {"pool_pre_ping": True, "pool_recycle": 280}
     app.config["JWT_SECRET_KEY"] = settings.jwt_secret_key
     app.config["JWT_ACCESS_TOKEN_EXPIRES"] = settings.jwt_expires_hours * 3600
     app.config["TESTING"] = settings.testing
