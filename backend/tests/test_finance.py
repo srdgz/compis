@@ -91,7 +91,8 @@ def test_paying_a_debt(flat):
     assert marcos.post(f"/api/debts/{debt_id}").get_json()["message"] == "La deuda ya está pagada"
     assert marcos.get(f"/api/debts/roomie/{marcos.id}").get_json() == []
     feed = owner.get(f"/api/blog/home/{flat['home_id']}").get_json()
-    assert any("Marcos ha pagado 5.00€ a Lucia" in entry["text"] for entry in feed)
+    assert any("Marcos debe 5,00€ a Lucia" in entry["text"] for entry in feed)
+    assert any("Marcos ha pagado 5,00€ a Lucia" in entry["text"] for entry in feed)
     assert owner.post("/api/debts/999").status_code == 404
 
 

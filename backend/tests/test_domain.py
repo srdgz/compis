@@ -43,7 +43,7 @@ def test_split_requires_a_debtor():
 def test_euro_conversions():
     assert to_euros(1250) == 12.5
     assert to_euros(None) is None
-    assert format_euros(1250) == "12.50"
+    assert format_euros(1250) == "12,50"
 
 
 def test_debt_can_be_marked_paid_by_debtor_or_creditor():

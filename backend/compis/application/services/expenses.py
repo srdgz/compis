@@ -110,7 +110,7 @@ class DebtService:
             debts.append(debt)
             self._activity.record(
                 expense.home_id,
-                f"{actor.first_name} te debe {format_euros(share)}€",
+                f"{debtor.first_name} debe {format_euros(share)}€ a {actor.first_name}",
                 debtor.first_name,
                 amount_cents=share,
             )

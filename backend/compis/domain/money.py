@@ -26,4 +26,4 @@ def split_equally(total_cents: int, debtor_count: int) -> int:
 
 
 def format_euros(cents: int) -> str:
-    return f"{cents / 100:.2f}"
+    return f"{cents / 100:.2f}".replace(".", ",")
