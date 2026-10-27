@@ -75,6 +75,7 @@ class DebtRow(Base):
     name: Mapped[str] = mapped_column(String(80))
     amount_cents: Mapped[int] = mapped_column(Integer)
     status: Mapped[str] = mapped_column(String(20))
+    payment_method: Mapped[str | None] = mapped_column(String(20))
     date: Mapped[date] = mapped_column(Date)
     roomie_debtor_id: Mapped[int] = mapped_column(ForeignKey("roomies.id"), index=True)
     roomie_paying_id: Mapped[int] = mapped_column(ForeignKey("roomies.id"), index=True)

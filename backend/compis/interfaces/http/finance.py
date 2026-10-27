@@ -3,7 +3,7 @@ from flask_jwt_extended import jwt_required
 
 from compis.domain.money import to_cents
 from compis.interfaces.http import schemas, serializers
-from compis.interfaces.http.deps import actor_id, parse_body, services
+from compis.interfaces.http.deps import actor_id, flag, parse_body, services
 
 bp = Blueprint("finance", __name__)
 
@@ -26,7 +26,7 @@ def create_expense():
 @bp.get("/debts/roomie/<int:roomie_id>")
 @jwt_required()
 def debts_by_roomie(roomie_id: int):
-    debts = services().debts.list_for_roomie(actor_id(), roomie_id)
+    debts = services().debts.list_for_roomie(actor_id(), roomie_id, flag("include_settled"))
     return jsonify([serializers.debt(d) for d in debts])
 
 
@@ -48,9 +48,25 @@ def create_debts():
     )
 
 
-@bp.post("/debts/<int:debt_id>")
+@bp.post("/debts/<int:debt_id>/report")
 @jwt_required()
-def pay_debt(debt_id: int):
-    changed = services().debts.mark_paid(actor_id(), debt_id)
-    message = "Deuda pagada correctamente" if changed else "La deuda ya está pagada"
+def report_payment(debt_id: int):
+    body = parse_body(schemas.ReportPaymentBody)
+    changed = services().debts.report_payment(actor_id(), debt_id, body.method)
+    message = "Pago comunicado" if changed else "El pago ya estaba comunicado"
     return jsonify({"message": message})
+
+
+@bp.post("/debts/<int:debt_id>/confirm")
+@jwt_required()
+def confirm_payment(debt_id: int):
+    changed = services().debts.confirm_receipt(actor_id(), debt_id)
+    message = "Pago confirmado" if changed else "La deuda ya estaba saldada"
+    return jsonify({"message": message})
+
+
+@bp.post("/debts/<int:debt_id>/reject")
+@jwt_required()
+def reject_payment(debt_id: int):
+    services().debts.reject_payment(actor_id(), debt_id)
+    return jsonify({"message": "Pago rechazado. La deuda vuelve a estar pendiente"})

@@ -30,6 +30,8 @@ class Settings:
     mail_use_ssl: bool = False
     mail_sender: str = "no-reply@compis.app"
     cron_secret: str = ""
+    paypal_demo_client_id: str = ""
+    paypal_demo_client_secret: str = ""
     testing: bool = False
 
     @classmethod
@@ -51,4 +53,6 @@ class Settings:
             mail_use_ssl=_flag("MAIL_USE_SSL", False),
             mail_sender=os.getenv("MAIL_SENDER", "no-reply@compis.app"),
             cron_secret=os.getenv("CRON_SECRET", ""),
+            paypal_demo_client_id=os.getenv("PAYPAL_DEMO_CLIENT_ID", ""),
+            paypal_demo_client_secret=os.getenv("PAYPAL_DEMO_CLIENT_SECRET", ""),
         )

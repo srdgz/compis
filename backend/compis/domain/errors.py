@@ -24,3 +24,7 @@ class NotFoundError(DomainError):
 
 class ConflictError(DomainError):
     status_code = 409
+
+
+class PaymentGatewayError(DomainError):
+    status_code = 502

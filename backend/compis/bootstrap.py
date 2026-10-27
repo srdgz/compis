@@ -4,7 +4,7 @@ from flask_jwt_extended import JWTManager
 from flask_mail import Mail
 
 from compis.application.container import build_services
-from compis.application.ports import Clock, Mailer
+from compis.application.ports import Clock, Mailer, PaymentGateway
 from compis.config import Settings
 from compis.infrastructure.adapters import (
     BcryptPasswordHasher,
@@ -13,6 +13,7 @@ from compis.infrastructure.adapters import (
     SystemClock,
 )
 from compis.infrastructure.db.extensions import db, migrate
+from compis.infrastructure.paypal import PayPalSandboxGateway
 from compis.infrastructure.unit_of_work import SqlUnitOfWork
 from compis.interfaces.cli import register_cli
 from compis.interfaces.http import register_http
@@ -22,6 +23,7 @@ def create_app(
     settings: Settings | None = None,
     clock: Clock | None = None,
     mailer: Mailer | None = None,
+    gateway: PaymentGateway | None = None,
 ) -> Flask:
     settings = settings or Settings.from_env()
     app = Flask(__name__)
@@ -51,12 +53,18 @@ def create_app(
             if settings.mail_server
             else NullMailer()
         )
+    if gateway is None and settings.paypal_demo_client_id and settings.paypal_demo_client_secret:
+        gateway = PayPalSandboxGateway(
+            settings.paypal_demo_client_id, settings.paypal_demo_client_secret
+        )
     app.extensions["compis"] = build_services(
         SqlUnitOfWork(db.session),
         clock or SystemClock(),
         BcryptPasswordHasher(),
         mailer,
         settings.cron_secret,
+        gateway,
+        settings.paypal_demo_client_id,
     )
     register_http(app)
     register_cli(app)

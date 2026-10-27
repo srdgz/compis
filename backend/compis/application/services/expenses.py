@@ -6,7 +6,7 @@ from compis.application.access import (
 )
 from compis.application.ports import Clock, UnitOfWork
 from compis.application.services.activity import ActivityService
-from compis.domain.entities import Debt, Expense
+from compis.domain.entities import ActivityStatus, Debt, Expense
 from compis.domain.errors import (
     ConflictError,
     NotFoundError,
@@ -120,32 +120,93 @@ class DebtService:
         return debts
 
     def list_for_roomie(
-        self, actor_id: int, roomie_id: int, pending_only: bool = True
+        self, actor_id: int, roomie_id: int, include_settled: bool = False
     ) -> list[Debt]:
         actor = load_actor(self._uow, actor_id)
         require_can_manage(actor, load_roomie(self._uow, roomie_id))
-        return self._uow.debts.list_for_roomie(roomie_id, pending_only)
+        return self._uow.debts.list_for_roomie(roomie_id, pending_only=not include_settled)
 
-    def mark_paid(self, actor_id: int, debt_id: int) -> bool:
-        actor = load_actor(self._uow, actor_id)
+    def report_payment(self, actor_id: int, debt_id: int, method: str) -> bool:
+        debt = self._load_debt(debt_id)
+        changed = debt.report_paid(actor_id, method)
+        if changed:
+            self._save_and_log(
+                debt,
+                lambda debtor, creditor: (
+                    f"{debtor.first_name} dice que ha pagado {format_euros(debt.amount_cents)}€ "
+                    f"a {creditor.first_name}",
+                    debtor.first_name,
+                    ActivityStatus.PENDING,
+                ),
+            )
+        return changed
+
+    def confirm_receipt(self, actor_id: int, debt_id: int) -> bool:
+        debt = self._load_debt(debt_id)
+        changed = debt.confirm(actor_id)
+        if changed:
+            self._save_and_log(
+                debt,
+                lambda debtor, creditor: (
+                    f"{creditor.first_name} ha confirmado el pago de "
+                    f"{format_euros(debt.amount_cents)}€ de {debtor.first_name}",
+                    creditor.first_name,
+                    ActivityStatus.DONE,
+                ),
+            )
+        return changed
+
+    def reject_payment(self, actor_id: int, debt_id: int) -> None:
+        debt = self._load_debt(debt_id)
+        debt.reject(actor_id)
+        self._save_and_log(
+            debt,
+            lambda debtor, creditor: (
+                f"{creditor.first_name} no ha recibido el pago de "
+                f"{format_euros(debt.amount_cents)}€ de {debtor.first_name}",
+                creditor.first_name,
+                ActivityStatus.PENDING,
+            ),
+        )
+
+    def settle_with_gateway(self, actor_id: int, debt_id: int) -> bool:
+        debt = self._load_debt(debt_id)
+        changed = debt.settle_with_gateway(actor_id)
+        if changed:
+            self._save_and_log(
+                debt,
+                lambda debtor, creditor: (
+                    f"{debtor.first_name} ha pagado {format_euros(debt.amount_cents)}€ "
+                    f"a {creditor.first_name} con PayPal (modo demo)",
+                    debtor.first_name,
+                    ActivityStatus.DONE,
+                ),
+            )
+        return changed
+
+    def load_payable_debt(self, actor_id: int, debt_id: int) -> Debt:
+        load_actor(self._uow, actor_id)
+        debt = self._load_debt(debt_id)
+        if debt.roomie_debtor_id != actor_id:
+            raise PermissionDeniedError("Solo quien debe el dinero puede pagar esta deuda")
+        if debt.is_settled:
+            raise ConflictError("La deuda ya está saldada")
+        return debt
+
+    def _load_debt(self, debt_id: int) -> Debt:
         debt = self._uow.debts.get(debt_id)
         if debt is None:
             raise NotFoundError("Deuda no encontrada")
-        assert actor.id is not None
-        changed = debt.mark_paid(actor.id)
-        if not changed:
-            return False
+        return debt
+
+    def _save_and_log(self, debt: Debt, describe) -> None:
         self._uow.debts.save(debt)
         debtor = load_roomie(self._uow, debt.roomie_debtor_id)
         creditor = load_roomie(self._uow, debt.roomie_paying_id)
         expense = self._uow.expenses.get(debt.expense_id)
         if expense is not None:
+            text, name, status = describe(debtor, creditor)
             self._activity.record(
-                expense.home_id,
-                f"{debtor.first_name} ha pagado {format_euros(debt.amount_cents)}€ "
-                f"a {creditor.first_name}",
-                debtor.first_name,
-                amount_cents=debt.amount_cents,
+                expense.home_id, text, name, status, amount_cents=debt.amount_cents
             )
         self._uow.commit()
-        return True

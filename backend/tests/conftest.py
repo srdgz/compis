@@ -2,6 +2,7 @@ from datetime import date, datetime
 
 import pytest
 
+from compis.application.ports import CaptureResult
 from compis.bootstrap import create_app
 from compis.config import Settings
 from compis.infrastructure.db.extensions import db
@@ -26,6 +27,23 @@ class RecordingMailer:
         self.sent.append((subject, recipients))
 
 
+class FakeGateway:
+    def __init__(self) -> None:
+        self.orders: dict[str, tuple[int, str]] = {}
+        self.capture_overrides: dict[str, CaptureResult] = {}
+
+    def create_order(self, amount_cents: int, reference: str) -> str:
+        order_id = f"ORDER-{len(self.orders) + 1}"
+        self.orders[order_id] = (amount_cents, reference)
+        return order_id
+
+    def capture_order(self, order_id: str) -> CaptureResult:
+        if order_id in self.capture_overrides:
+            return self.capture_overrides[order_id]
+        amount, reference = self.orders[order_id]
+        return CaptureResult("COMPLETED", amount, "EUR", reference)
+
+
 @pytest.fixture
 def clock() -> FixedClock:
     return FixedClock()
@@ -37,9 +55,16 @@ def mailer() -> RecordingMailer:
 
 
 @pytest.fixture
-def app(clock, mailer):
-    settings = Settings(testing=True, cron_secret="cron-secret")
-    app = create_app(settings, clock=clock, mailer=mailer)
+def gateway() -> FakeGateway:
+    return FakeGateway()
+
+
+@pytest.fixture
+def app(clock, mailer, gateway):
+    settings = Settings(
+        testing=True, cron_secret="cron-secret", paypal_demo_client_id="demo-client"
+    )
+    app = create_app(settings, clock=clock, mailer=mailer, gateway=gateway)
     with app.app_context():
         db.create_all()
         yield app

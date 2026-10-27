@@ -2,12 +2,19 @@ from dataclasses import dataclass
 from datetime import date, datetime
 from enum import StrEnum
 
-from compis.domain.errors import PermissionDeniedError
+from compis.domain.errors import ConflictError, PermissionDeniedError, ValidationError
 
 
 class DebtStatus(StrEnum):
     PENDING = "Pendiente"
     PAID = "Pagada"
+    CONFIRMED = "Confirmada"
+
+
+class PaymentMethod(StrEnum):
+    CASH = "cash"
+    PAYPAL_ME = "paypal_me"
+    PAYPAL_SANDBOX = "paypal_sandbox"
 
 
 class ActivityStatus(StrEnum):
@@ -88,14 +95,49 @@ class Debt:
     roomie_paying_id: int
     expense_id: int
     status: str = DebtStatus.PENDING
+    payment_method: str | None = None
     id: int | None = None
 
-    def mark_paid(self, actor_id: int) -> bool:
-        if actor_id not in (self.roomie_debtor_id, self.roomie_paying_id):
-            raise PermissionDeniedError("No tienes permiso para marcar esta deuda como pagada")
+    @property
+    def is_settled(self) -> bool:
+        return self.status == DebtStatus.CONFIRMED
+
+    def report_paid(self, actor_id: int, method: str) -> bool:
+        if actor_id != self.roomie_debtor_id:
+            raise PermissionDeniedError("Solo quien debe el dinero puede avisar de que ha pagado")
+        if method not in (PaymentMethod.CASH, PaymentMethod.PAYPAL_ME):
+            raise ValidationError("El método de pago no es válido")
+        if self.is_settled:
+            raise ConflictError("La deuda ya está saldada")
         if self.status == DebtStatus.PAID:
             return False
         self.status = DebtStatus.PAID
+        self.payment_method = method
+        return True
+
+    def confirm(self, actor_id: int) -> bool:
+        if actor_id != self.roomie_paying_id:
+            raise PermissionDeniedError("Solo quien debe cobrar puede confirmar el pago")
+        if self.is_settled:
+            return False
+        self.status = DebtStatus.CONFIRMED
+        return True
+
+    def reject(self, actor_id: int) -> None:
+        if actor_id != self.roomie_paying_id:
+            raise PermissionDeniedError("Solo quien debe cobrar puede rechazar el pago")
+        if self.status != DebtStatus.PAID:
+            raise ConflictError("Solo se puede rechazar un pago que se haya comunicado")
+        self.status = DebtStatus.PENDING
+        self.payment_method = None
+
+    def settle_with_gateway(self, actor_id: int) -> bool:
+        if actor_id != self.roomie_debtor_id:
+            raise PermissionDeniedError("Solo quien debe el dinero puede pagar esta deuda")
+        if self.is_settled:
+            return False
+        self.status = DebtStatus.CONFIRMED
+        self.payment_method = PaymentMethod.PAYPAL_SANDBOX
         return True
 
 

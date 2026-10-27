@@ -76,24 +76,68 @@ def test_debt_creation_rules(flat, register):
     assert create(owner).status_code == 409
 
 
-def test_paying_a_debt(flat):
-    owner, marcos, aitana = flat["owner"], flat["marcos"], flat["aitana"]
+def make_debt(flat):
+    owner, marcos = flat["owner"], flat["marcos"]
     expense_id = purchase(flat)[0].get_json()["expense"]["id"]
     owner.post(
         "/api/debts", json={"expense_id": expense_id, "debtor_ids": [marcos.id], "total_amount": 10}
     )
-    debt_id = marcos.get(f"/api/debts/roomie/{marcos.id}").get_json()[0]["id"]
+    return marcos.get(f"/api/debts/roomie/{marcos.id}").get_json()[0]["id"]
 
-    assert aitana.post(f"/api/debts/{debt_id}").status_code == 403
-    assert (
-        marcos.post(f"/api/debts/{debt_id}").get_json()["message"] == "Deuda pagada correctamente"
+
+def test_debtor_reports_and_creditor_confirms(flat):
+    owner, marcos, aitana = flat["owner"], flat["marcos"], flat["aitana"]
+    debt_id = make_debt(flat)
+
+    assert aitana.post(f"/api/debts/{debt_id}/report", json={"method": "cash"}).status_code == 403
+    assert owner.post(f"/api/debts/{debt_id}/report", json={"method": "cash"}).status_code == 403
+    assert marcos.post(f"/api/debts/{debt_id}/report", json={"method": "bizum"}).status_code == 400
+    reported = marcos.post(f"/api/debts/{debt_id}/report", json={"method": "paypal_me"})
+    assert reported.get_json()["message"] == "Pago comunicado"
+    again = marcos.post(f"/api/debts/{debt_id}/report", json={"method": "paypal_me"})
+    assert again.get_json()["message"] == "El pago ya estaba comunicado"
+
+    debt = marcos.get(f"/api/debts/roomie/{marcos.id}").get_json()[0]
+    assert (debt["status"], debt["payment_method"]) == ("Pagada", "paypal_me")
+
+    assert marcos.post(f"/api/debts/{debt_id}/confirm").status_code == 403
+    assert owner.post(f"/api/debts/{debt_id}/confirm").get_json()["message"] == "Pago confirmado"
+    assert owner.post(f"/api/debts/{debt_id}/confirm").get_json()["message"] == (
+        "La deuda ya estaba saldada"
     )
-    assert marcos.post(f"/api/debts/{debt_id}").get_json()["message"] == "La deuda ya está pagada"
     assert marcos.get(f"/api/debts/roomie/{marcos.id}").get_json() == []
+    settled = marcos.get(f"/api/debts/roomie/{marcos.id}?include_settled=true").get_json()
+    assert [d["status"] for d in settled] == ["Confirmada"]
+    assert marcos.post(f"/api/debts/{debt_id}/report", json={"method": "cash"}).status_code == 409
+
     feed = owner.get(f"/api/blog/home/{flat['home_id']}").get_json()
-    assert any("Marcos debe 5,00€ a Lucia" in entry["text"] for entry in feed)
-    assert any("Marcos ha pagado 5,00€ a Lucia" in entry["text"] for entry in feed)
-    assert owner.post("/api/debts/999").status_code == 404
+    texts = [entry["text"] for entry in feed]
+    assert "Marcos dice que ha pagado 5,00€ a Lucia" in texts
+    assert "Lucia ha confirmado el pago de 5,00€ de Marcos" in texts
+
+
+def test_creditor_can_confirm_without_a_report_and_reject_a_report(flat):
+    owner, marcos = flat["owner"], flat["marcos"]
+    debt_id = make_debt(flat)
+    assert owner.post(f"/api/debts/{debt_id}/reject").status_code == 409
+
+    marcos.post(f"/api/debts/{debt_id}/report", json={"method": "cash"})
+    assert marcos.post(f"/api/debts/{debt_id}/reject").status_code == 403
+    assert owner.post(f"/api/debts/{debt_id}/reject").status_code == 200
+    debt = marcos.get(f"/api/debts/roomie/{marcos.id}").get_json()[0]
+    assert (debt["status"], debt["payment_method"]) == ("Pendiente", None)
+
+    assert owner.post(f"/api/debts/{debt_id}/confirm").status_code == 200
+    assert owner.post("/api/debts/999/confirm").status_code == 404
+
+
+def test_a_reported_debt_still_blocks_removal_until_confirmed(flat):
+    owner, marcos = flat["owner"], flat["marcos"]
+    debt_id = make_debt(flat)
+    marcos.post(f"/api/debts/{debt_id}/report", json={"method": "cash"})
+    assert owner.delete(f"/api/home/{flat['home_id']}/{marcos.id}").status_code == 409
+    owner.post(f"/api/debts/{debt_id}/confirm")
+    assert owner.delete(f"/api/home/{flat['home_id']}/{marcos.id}").status_code == 200
 
 
 def test_roomie_with_pending_debts_cannot_be_removed(flat):

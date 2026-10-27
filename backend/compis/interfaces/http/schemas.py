@@ -1,3 +1,5 @@
+from typing import Literal
+
 from pydantic import BaseModel
 
 
@@ -53,3 +55,16 @@ class FileBody(BaseModel):
     url: str
     home_id: int
     expense_id: int | None = None
+
+
+class ReportPaymentBody(BaseModel):
+    method: Literal["cash", "paypal_me"]
+
+
+class PaypalOrderBody(BaseModel):
+    debt_id: int
+
+
+class PaypalCaptureBody(BaseModel):
+    debt_id: int
+    order_id: str

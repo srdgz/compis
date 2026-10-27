@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from datetime import date, datetime
 from typing import Protocol
 
@@ -117,3 +118,17 @@ class Clock(Protocol):
 
 class Mailer(Protocol):
     def send(self, subject: str, html: str, recipients: list[str]) -> None: ...
+
+
+@dataclass(frozen=True)
+class CaptureResult:
+    status: str
+    amount_cents: int
+    currency: str
+    reference: str
+
+
+class PaymentGateway(Protocol):
+    def create_order(self, amount_cents: int, reference: str) -> str: ...
+
+    def capture_order(self, order_id: str) -> CaptureResult: ...

@@ -24,7 +24,7 @@ class CalendarService:
         if actor.id != roomie_id:
             raise PermissionDeniedError("Solo puedes ver tu propio calendario")
         events = []
-        for debt in self._uow.debts.list_for_roomie(roomie_id, pending_only=False):
+        for debt in self._uow.debts.list_for_roomie(roomie_id, pending_only=True):
             amount = format_euros(debt.amount_cents)
             if debt.roomie_debtor_id == roomie_id:
                 other = load_roomie(self._uow, debt.roomie_paying_id)

@@ -7,6 +7,7 @@ from compis.application.access import (
 from compis.application.ports import PasswordHasher, UnitOfWork
 from compis.domain.entities import Roomie
 from compis.domain.errors import PermissionDeniedError, ValidationError
+from compis.domain.paypal import normalise_paypal_username
 
 UNSET = object()
 
@@ -49,8 +50,9 @@ class RoomieService:
         if avatar is not UNSET:
             actor.avatar = avatar if isinstance(avatar, str) else None
         if paypal_username is not UNSET:
-            cleaned = paypal_username.strip() if isinstance(paypal_username, str) else ""
-            actor.paypal_username = cleaned or None
+            actor.paypal_username = normalise_paypal_username(
+                paypal_username if isinstance(paypal_username, str) else None
+            )
         if password is not UNSET:
             if not isinstance(password, str) or len(password) < 8:
                 raise ValidationError("La contraseña debe tener al menos 8 caracteres")

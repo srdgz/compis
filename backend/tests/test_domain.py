@@ -3,8 +3,9 @@ from datetime import date
 import pytest
 
 from compis.domain.entities import Debt, DebtStatus
-from compis.domain.errors import PermissionDeniedError, ValidationError
+from compis.domain.errors import ConflictError, PermissionDeniedError, ValidationError
 from compis.domain.money import format_euros, split_equally, to_cents, to_euros
+from compis.domain.paypal import normalise_paypal_username
 
 
 def make_debt() -> Debt:
@@ -46,19 +47,67 @@ def test_euro_conversions():
     assert format_euros(1250) == "12,50"
 
 
-def test_debt_can_be_marked_paid_by_debtor_or_creditor():
-    for actor in (1, 2):
-        debt = make_debt()
-        assert debt.mark_paid(actor) is True
-        assert debt.status == DebtStatus.PAID
-
-
-def test_debt_mark_paid_is_idempotent():
+def test_only_the_debtor_reports_a_payment():
     debt = make_debt()
-    debt.mark_paid(2)
-    assert debt.mark_paid(2) is False
-
-
-def test_third_party_cannot_mark_debt_paid():
+    assert debt.report_paid(2, "cash") is True
+    assert (debt.status, debt.payment_method) == (DebtStatus.PAID, "cash")
+    assert debt.report_paid(2, "cash") is False
     with pytest.raises(PermissionDeniedError):
-        make_debt().mark_paid(3)
+        make_debt().report_paid(1, "cash")
+    with pytest.raises(ValidationError):
+        make_debt().report_paid(2, "bizum")
+    with pytest.raises(ValidationError):
+        make_debt().report_paid(2, "paypal_sandbox")
+
+
+def test_only_the_creditor_confirms_or_rejects():
+    debt = make_debt()
+    with pytest.raises(PermissionDeniedError):
+        debt.confirm(2)
+    with pytest.raises(ConflictError):
+        debt.reject(1)
+    debt.report_paid(2, "cash")
+    with pytest.raises(PermissionDeniedError):
+        debt.reject(2)
+    debt.reject(1)
+    assert (debt.status, debt.payment_method) == (DebtStatus.PENDING, None)
+    assert debt.confirm(1) is True
+    assert debt.is_settled
+    assert debt.confirm(1) is False
+
+
+def test_settled_debts_cannot_be_reported_again():
+    debt = make_debt()
+    debt.confirm(1)
+    with pytest.raises(ConflictError):
+        debt.report_paid(2, "cash")
+
+
+def test_gateway_settlement_is_limited_to_the_debtor():
+    debt = make_debt()
+    with pytest.raises(PermissionDeniedError):
+        debt.settle_with_gateway(1)
+    assert debt.settle_with_gateway(2) is True
+    assert (debt.status, debt.payment_method) == (DebtStatus.CONFIRMED, "paypal_sandbox")
+    assert debt.settle_with_gateway(2) is False
+
+
+@pytest.mark.parametrize(
+    ("raw", "expected"),
+    [
+        ("lucia", "lucia"),
+        ("  Lucia99 ", "Lucia99"),
+        ("https://www.paypal.me/lucia", "lucia"),
+        ("paypal.me/lucia/12", "lucia"),
+        ("", None),
+        (None, None),
+    ],
+)
+def test_paypal_username_normalisation(raw, expected):
+    assert normalise_paypal_username(raw) == expected
+
+
+@pytest.mark.parametrize("raw", ["ab", "lucia garcia", "lucia!", "x" * 21])
+def test_paypal_username_rejects_invalid_values(raw):
+    with pytest.raises(ValidationError):
+        normalise_paypal_username(raw)

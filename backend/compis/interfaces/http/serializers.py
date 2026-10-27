@@ -76,6 +76,7 @@ def debt(entity: Debt) -> dict:
         "roomie_debtor_id": entity.roomie_debtor_id,
         "roomie_paying_id": entity.roomie_paying_id,
         "status": str(entity.status),
+        "payment_method": entity.payment_method,
         "date": entity.date.isoformat(),
         "expense_id": entity.expense_id,
     }

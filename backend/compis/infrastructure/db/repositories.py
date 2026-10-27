@@ -178,7 +178,7 @@ class SqlDebtRepository(SqlRepository):
             or_(DebtRow.roomie_debtor_id == roomie_id, DebtRow.roomie_paying_id == roomie_id)
         ]
         if pending_only:
-            conditions.append(DebtRow.status == DebtStatus.PENDING)
+            conditions.append(DebtRow.status != DebtStatus.CONFIRMED)
         return self._query(*conditions)
 
     def has_pending(self, roomie_id: int) -> bool:
