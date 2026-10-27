@@ -23,3 +23,5 @@ Thumbs.db
 .ruff_cache/
 .coverage
 htmlcov/
+frontend/dist/
+*.tsbuildinfo
