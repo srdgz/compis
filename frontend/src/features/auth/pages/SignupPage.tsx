@@ -5,8 +5,8 @@ import { Link, Navigate, useNavigate } from "react-router-dom";
 import { errorMessage } from "@/shared/api/http";
 import { useDocumentTitle } from "@/shared/lib/useDocumentTitle";
 import { Button } from "@/shared/ui/Button";
-import { TextField } from "@/shared/ui/Field";
 import { ErrorNotice } from "@/shared/ui/Feedback";
+import { PasswordField, TextField } from "@/shared/ui/Field";
 import { useToast } from "@/shared/ui/Toast";
 
 import { authApi } from "../api";
@@ -19,14 +19,22 @@ interface FieldErrors {
   name?: string;
   email?: string;
   password?: string;
+  confirm?: string;
 }
 
-export function validateSignup(name: string, email: string, password: string): FieldErrors {
+export function validateSignup(
+  name: string,
+  email: string,
+  password: string,
+  confirm: string,
+): FieldErrors {
   const errors: FieldErrors = {};
   if (!name.trim()) errors.name = "Escribe tu nombre.";
   if (!EMAIL_PATTERN.test(email))
     errors.email = "Escribe un correo con formato nombre@dominio.com.";
   if (password.length < 8) errors.password = "La contraseña debe tener al menos 8 caracteres.";
+  if (!confirm) errors.confirm = "Repite la contraseña.";
+  else if (confirm !== password) errors.confirm = "Las contraseñas no coinciden.";
   return errors;
 }
 
@@ -38,6 +46,7 @@ export function SignupPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
   const [errors, setErrors] = useState<FieldErrors>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -46,7 +55,7 @@ export function SignupPage() {
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
-    const found = validateSignup(name, email, password);
+    const found = validateSignup(name, email, password, confirm);
     setErrors(found);
     setFormError(null);
     if (Object.keys(found).length > 0) return;
@@ -87,15 +96,22 @@ export function SignupPage() {
           error={errors.email}
           onChange={(event) => setEmail(event.target.value)}
         />
-        <TextField
+        <PasswordField
           label="Contraseña"
-          type="password"
           autoComplete="new-password"
           hint="Mínimo 8 caracteres."
           required
           value={password}
           error={errors.password}
           onChange={(event) => setPassword(event.target.value)}
+        />
+        <PasswordField
+          label="Repite la contraseña"
+          autoComplete="new-password"
+          required
+          value={confirm}
+          error={errors.confirm}
+          onChange={(event) => setConfirm(event.target.value)}
         />
         <Button type="submit" loading={submitting}>
           Crear cuenta

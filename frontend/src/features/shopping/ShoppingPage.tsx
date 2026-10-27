@@ -1,3 +1,4 @@
+import { Plus, ShoppingBasket, X } from "lucide-react";
 import { useState } from "react";
 import type { FormEvent } from "react";
 
@@ -7,8 +8,8 @@ import { errorMessage } from "@/shared/api/http";
 import { useDocumentTitle } from "@/shared/lib/useDocumentTitle";
 import { Button } from "@/shared/ui/Button";
 import { Dialog } from "@/shared/ui/Dialog";
-import { Checkbox, TextField } from "@/shared/ui/Field";
 import { EmptyState, ErrorNotice, Loading, PageHeader } from "@/shared/ui/Feedback";
+import { Checkbox, TextField } from "@/shared/ui/Field";
 import { useToast } from "@/shared/ui/Toast";
 
 import { useAddItem, useRemoveItem, useShoppingItems, useShoppingList } from "./hooks";
@@ -110,17 +111,22 @@ export function ShoppingPage() {
   return (
     <>
       <PageHeader
+        eyebrow="Hogar"
         title="Lista de la compra"
         description="Apunta lo que falta y marca lo que ya has comprado."
         actions={
           <Button disabled={selected.length === 0} onClick={() => setPurchasing(true)}>
+            <ShoppingBasket aria-hidden="true" size={20} />
             Registrar compra{selected.length > 0 ? ` (${selected.length})` : ""}
           </Button>
         }
       />
 
-      <form onSubmit={handleAdd} className="flex flex-wrap items-end gap-3">
-        <div className="min-w-64 flex-1">
+      <form
+        onSubmit={handleAdd}
+        className="flex flex-col gap-3 rounded-card border border-line bg-surface p-4 shadow-card sm:flex-row sm:items-end"
+      >
+        <div className="min-w-0 flex-1">
           <TextField
             label="Añadir elemento"
             maxLength={100}
@@ -129,6 +135,7 @@ export function ShoppingPage() {
           />
         </div>
         <Button type="submit" loading={addItem.isPending} disabled={listId === undefined}>
+          <Plus aria-hidden="true" size={20} />
           Añadir
         </Button>
       </form>
@@ -136,14 +143,16 @@ export function ShoppingPage() {
       {(list.isPending || pending.isPending) && <Loading />}
       {pending.error && <ErrorNotice message={errorMessage(pending.error)} />}
       {pending.data && pending.data.length === 0 && (
-        <EmptyState title="La lista está vacía">Añade lo que necesitéis para la casa.</EmptyState>
+        <EmptyState title="La lista está vacía" icon={ShoppingBasket}>
+          Añade lo que necesitéis para la casa.
+        </EmptyState>
       )}
 
       <ul className="flex flex-col gap-2">
         {(pending.data ?? []).map((item) => (
           <li
             key={item.id}
-            className="flex items-center justify-between gap-3 rounded-card border border-line bg-surface px-4"
+            className="flex items-center justify-between gap-3 rounded-2xl border border-line bg-surface pl-4 pr-2 shadow-card"
           >
             <Checkbox
               label={item.name}
@@ -152,6 +161,7 @@ export function ShoppingPage() {
             />
             <Button
               variant="ghost"
+              className="h-11 w-11 shrink-0 !p-0"
               aria-label={`Quitar ${item.name} de la lista`}
               onClick={() =>
                 removeItem.mutate(item.id, {
@@ -160,20 +170,22 @@ export function ShoppingPage() {
                 })
               }
             >
-              Quitar
+              <X aria-hidden="true" size={20} />
             </Button>
           </li>
         ))}
       </ul>
 
       {purchased.data && purchased.data.length > 0 && (
-        <details className="rounded-card border border-line bg-surface p-4">
+        <details className="rounded-card border border-line bg-surface p-4 shadow-card">
           <summary className="min-h-11 cursor-pointer py-2 font-semibold">
             Comprado ({purchased.data.length})
           </summary>
-          <ul className="mt-2 flex flex-col gap-1 text-muted">
+          <ul className="mt-2 flex flex-wrap gap-2">
             {purchased.data.map((item) => (
-              <li key={item.id}>{item.name}</li>
+              <li key={item.id} className="rounded-full bg-mint px-4 py-1.5 text-muted">
+                {item.name}
+              </li>
             ))}
           </ul>
         </details>

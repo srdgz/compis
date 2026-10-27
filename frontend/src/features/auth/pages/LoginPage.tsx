@@ -6,8 +6,8 @@ import { errorMessage } from "@/shared/api/http";
 import { DEMO_ACCOUNT } from "@/shared/config";
 import { useDocumentTitle } from "@/shared/lib/useDocumentTitle";
 import { Button } from "@/shared/ui/Button";
-import { TextField } from "@/shared/ui/Field";
 import { ErrorNotice } from "@/shared/ui/Feedback";
+import { PasswordField, TextField } from "@/shared/ui/Field";
 
 import { useAuth } from "../AuthProvider";
 import { AuthLayout } from "./AuthLayout";
@@ -56,9 +56,8 @@ export function LoginPage() {
           value={email}
           onChange={(event) => setEmail(event.target.value)}
         />
-        <TextField
+        <PasswordField
           label="Contraseña"
-          type="password"
           autoComplete="current-password"
           required
           value={password}
@@ -68,7 +67,7 @@ export function LoginPage() {
           Entrar
         </Button>
       </form>
-      <div className="flex flex-col gap-3 border-t border-line pt-6">
+      <div className="flex flex-col gap-4 border-t border-line pt-6">
         <Button
           variant="secondary"
           disabled={submitting}

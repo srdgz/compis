@@ -1,13 +1,13 @@
 import { ExternalLink } from "lucide-react";
 import { useState } from "react";
 
-import { PaypalDemoButtons } from "@/features/payments/PaypalDemoButtons";
 import { usePaypalDemoConfig } from "@/features/payments/hooks";
-import type { Roomie } from "@/features/roomies/api";
+import { PaypalDemoButtons } from "@/features/payments/PaypalDemoButtons";
 import { fullName } from "@/features/roomies/api";
+import type { Roomie } from "@/features/roomies/api";
 import { errorMessage } from "@/shared/api/http";
 import { formatEuro } from "@/shared/lib/format";
-import { Button } from "@/shared/ui/Button";
+import { Button, linkButtonClass } from "@/shared/ui/Button";
 import { Dialog } from "@/shared/ui/Dialog";
 import { ErrorNotice } from "@/shared/ui/Feedback";
 import { useToast } from "@/shared/ui/Toast";
@@ -66,7 +66,7 @@ export function PayDebtDialog({ debt, creditor, onClose }: PayDebtDialogProps) {
                   href={paypalMeUrl(paypalUsername, debt.amount)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border-2 border-brand bg-brand px-5 py-2 font-semibold text-on-brand"
+                  className={linkButtonClass("primary")}
                 >
                   Abrir PayPal.Me
                   <ExternalLink aria-hidden="true" size={18} />
@@ -101,7 +101,7 @@ export function PayDebtDialog({ debt, creditor, onClose }: PayDebtDialogProps) {
 
           {demo.data?.enabled && demo.data.client_id && (
             <section
-              className="flex flex-col gap-3 rounded-xl border-2 border-dashed border-line p-4"
+              className="flex flex-col gap-3 rounded-2xl border-2 border-dashed border-control p-4"
               aria-labelledby="pay-demo"
             >
               <h3 id="pay-demo" className="text-lg">

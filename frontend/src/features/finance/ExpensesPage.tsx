@@ -1,3 +1,4 @@
+import { Receipt, Share2 } from "lucide-react";
 import { useState } from "react";
 import type { FormEvent } from "react";
 
@@ -10,8 +11,8 @@ import { formatEuro } from "@/shared/lib/format";
 import { useDocumentTitle } from "@/shared/lib/useDocumentTitle";
 import { Button } from "@/shared/ui/Button";
 import { Dialog } from "@/shared/ui/Dialog";
-import { Checkbox, TextField } from "@/shared/ui/Field";
 import { Card, EmptyState, ErrorNotice, Loading, PageHeader } from "@/shared/ui/Feedback";
+import { Checkbox, TextField } from "@/shared/ui/Field";
 import { useToast } from "@/shared/ui/Toast";
 
 import type { Debt, Expense } from "./api";
@@ -96,7 +97,7 @@ function ShareDialog({
             />
           ))}
         </fieldset>
-        <p aria-live="polite" className="rounded-xl bg-mint px-4 py-3">
+        <p aria-live="polite" className="rounded-2xl bg-mint px-4 py-3">
           {share > 0
             ? `Cada persona pone ${formatEuro(share)} (tú incluido).`
             : "Elige el importe y con quién repartes para ver cuánto toca a cada uno."}
@@ -135,6 +136,8 @@ export function ExpensesPage() {
   const others = (roomies.data ?? []).filter((r) => r.id !== roomie.id);
   const iOwe = (debts.data ?? []).filter((d) => d.roomie_debtor_id === roomie.id);
   const owedToMe = (debts.data ?? []).filter((d) => d.roomie_paying_id === roomie.id);
+  const totalOwe = iOwe.reduce((sum, d) => sum + d.amount, 0);
+  const totalOwed = owedToMe.reduce((sum, d) => sum + d.amount, 0);
   const busyId =
     (confirm.isPending ? confirm.variables : undefined) ??
     (reject.isPending ? reject.variables : undefined);
@@ -156,15 +159,33 @@ export function ExpensesPage() {
   return (
     <>
       <PageHeader
+        eyebrow="Cuentas"
         title="Gastos y deudas"
         description="Reparte lo que has comprado y salda cuentas con tus compis."
       />
+
+      {debts.data && (
+        <dl className="grid gap-4 sm:grid-cols-2">
+          <div className="rounded-card border border-line bg-surface p-5 shadow-card">
+            <dt className="text-muted">Debes en total</dt>
+            <dd className="font-display text-4xl font-semibold tabular-nums">
+              {formatEuro(totalOwe)}
+            </dd>
+          </div>
+          <div className="rounded-card border border-line bg-surface p-5 shadow-card">
+            <dt className="text-muted">Te deben en total</dt>
+            <dd className="font-display text-4xl font-semibold tabular-nums text-brand">
+              {formatEuro(totalOwed)}
+            </dd>
+          </div>
+        </dl>
+      )}
 
       <Card title="Gastos por repartir">
         {expenses.isPending && <Loading />}
         {expenses.error && <ErrorNotice message={errorMessage(expenses.error)} />}
         {expenses.data && expenses.data.length === 0 && (
-          <EmptyState title="No tienes gastos pendientes de repartir">
+          <EmptyState title="No tienes gastos pendientes de repartir" icon={Receipt}>
             Registra una compra desde la lista de la compra para poder repartirla.
           </EmptyState>
         )}
@@ -172,16 +193,19 @@ export function ExpensesPage() {
           {(expenses.data ?? []).map((expense) => (
             <li
               key={expense.id}
-              className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-line px-4 py-3"
+              className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-line bg-bg px-4 py-3"
             >
               <p className="font-semibold">{expense.name}</p>
-              <Button onClick={() => setSharing(expense)}>Repartir</Button>
+              <Button onClick={() => setSharing(expense)}>
+                <Share2 aria-hidden="true" size={18} />
+                Repartir
+              </Button>
             </li>
           ))}
         </ul>
       </Card>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-6 lg:grid-cols-2">
         <Card title="Debes">
           {debts.isPending && <Loading />}
           {debts.error && <ErrorNotice message={errorMessage(debts.error)} />}
@@ -222,7 +246,7 @@ export function ExpensesPage() {
       </div>
 
       {settled.data && settled.data.length > 0 && (
-        <details className="rounded-card border border-line bg-surface p-4">
+        <details className="rounded-card border border-line bg-surface p-5 shadow-card">
           <summary className="min-h-11 cursor-pointer py-2 font-semibold">
             Deudas saldadas ({settled.data.length})
           </summary>

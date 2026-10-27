@@ -107,8 +107,8 @@ describe("paying a debt", () => {
     const user = userEvent.setup();
     renderApp("/expenses", true);
 
-    const card = (await screen.findByText(/Pago comunicado/)).closest("li") as HTMLElement;
-    expect(within(card).getByText(/con PayPal/)).toBeInTheDocument();
+    const card = (await screen.findByText(/Pagado con PayPal/)).closest("li") as HTMLElement;
+    expect(within(card).getByRole("list", { name: "Estado del pago" })).toBeInTheDocument();
     await user.click(within(card).getByRole("button", { name: "No lo he recibido" }));
     await user.click(await screen.findByRole("button", { name: "Confirmar que lo he recibido" }));
     expect(calls).toEqual(["reject", "confirm"]);

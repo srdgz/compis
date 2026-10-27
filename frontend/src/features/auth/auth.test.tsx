@@ -10,15 +10,22 @@ import { validateSignup } from "./pages/SignupPage";
 
 describe("validateSignup", () => {
   it("reports every invalid field", () => {
-    expect(validateSignup("", "nope", "123")).toEqual({
+    expect(validateSignup("", "nope", "123", "")).toEqual({
       name: expect.any(String),
       email: expect.any(String),
       password: expect.any(String),
+      confirm: "Repite la contraseña.",
     });
   });
 
   it("accepts valid data", () => {
-    expect(validateSignup("Ana", "ana@example.com", "password-123")).toEqual({});
+    expect(validateSignup("Ana", "ana@example.com", "password-123", "password-123")).toEqual({});
+  });
+
+  it("requires both passwords to match", () => {
+    expect(validateSignup("Ana", "ana@example.com", "password-123", "password-124")).toEqual({
+      confirm: "Las contraseñas no coinciden.",
+    });
   });
 });
 
@@ -76,7 +83,32 @@ describe("login", () => {
   });
 });
 
+describe("authentication pages", () => {
+  it("ignore a theme chosen in the app and follow the browser instead", async () => {
+    localStorage.setItem("compis.theme", "dark");
+    document.documentElement.setAttribute("data-theme", "dark");
+    const { unmount } = renderApp("/login");
+    await screen.findByRole("heading", { name: "Te damos la bienvenida" });
+    expect(document.documentElement).not.toHaveAttribute("data-theme");
+    expect(screen.queryByRole("group", { name: "Tema" })).not.toBeInTheDocument();
+    unmount();
+    expect(document.documentElement).toHaveAttribute("data-theme", "dark");
+  });
+});
+
 describe("signup", () => {
+  it("catches mismatching passwords before calling the API", async () => {
+    const user = userEvent.setup();
+    renderApp("/signup");
+    await user.type(screen.getByLabelText("Nombre"), "Ana");
+    await user.type(screen.getByLabelText("Correo electrónico"), "ana@example.com");
+    await user.type(screen.getByLabelText("Contraseña"), "password-123");
+    await user.type(screen.getByLabelText("Repite la contraseña"), "password-999");
+    await user.click(screen.getByRole("button", { name: "Crear cuenta" }));
+    expect(screen.getByText("Las contraseñas no coinciden.")).toBeInTheDocument();
+    expect(screen.getByLabelText("Repite la contraseña")).toHaveAttribute("aria-invalid", "true");
+  });
+
   it("shows field errors without calling the API", async () => {
     const user = userEvent.setup();
     renderApp("/signup");
@@ -94,6 +126,7 @@ describe("signup", () => {
     await user.type(screen.getByLabelText("Nombre"), "Ana");
     await user.type(screen.getByLabelText("Correo electrónico"), "ana@example.com");
     await user.type(screen.getByLabelText("Contraseña"), "password-123");
+    await user.type(screen.getByLabelText("Repite la contraseña"), "password-123");
     await user.click(screen.getByRole("button", { name: "Crear cuenta" }));
     await waitFor(() =>
       expect(screen.getByRole("heading", { name: "Te damos la bienvenida" })).toBeInTheDocument(),

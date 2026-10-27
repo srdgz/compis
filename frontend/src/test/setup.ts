@@ -3,6 +3,9 @@ import { cleanup } from "@testing-library/react";
 import { afterAll, afterEach, beforeAll } from "vitest";
 
 import { server } from "./server";
+import { installMatchMedia, setViewportWidth } from "./viewport";
+
+installMatchMedia();
 
 beforeAll(() => server.listen({ onUnhandledFrame: "error" }));
 
@@ -10,6 +13,8 @@ afterEach(() => {
   cleanup();
   server.resetHandlers();
   localStorage.clear();
+  document.documentElement.removeAttribute("data-theme");
+  setViewportWidth(1280);
 });
 
 afterAll(() => server.close());

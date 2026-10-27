@@ -1,3 +1,4 @@
+import { CalendarClock, Check, ListChecks, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import type { FormEvent } from "react";
 
@@ -6,12 +7,14 @@ import { fullName } from "@/features/roomies/api";
 import type { Roomie } from "@/features/roomies/api";
 import { useHomeRoomies } from "@/features/roomies/hooks";
 import { errorMessage } from "@/shared/api/http";
-import { formatDay, todayIso } from "@/shared/lib/format";
+import { DUE_LABEL, dueState } from "@/shared/lib/due";
+import { cx, formatDay, todayIso } from "@/shared/lib/format";
 import { useDocumentTitle } from "@/shared/lib/useDocumentTitle";
+import { Avatar } from "@/shared/ui/Avatar";
 import { Button } from "@/shared/ui/Button";
 import { ConfirmDialog, Dialog } from "@/shared/ui/Dialog";
-import { Checkbox, SelectField, TextField } from "@/shared/ui/Field";
 import { Badge, EmptyState, ErrorNotice, Loading, PageHeader } from "@/shared/ui/Feedback";
+import { Checkbox, SelectField, TextField } from "@/shared/ui/Field";
 import { useToast } from "@/shared/ui/Toast";
 
 import type { Task } from "./api";
@@ -184,13 +187,19 @@ export function TasksPage() {
   return (
     <>
       <PageHeader
+        eyebrow="Hogar"
         title="Tareas"
         description="Quién hace qué y para cuándo."
-        actions={<Button onClick={() => setCreating(true)}>Nueva tarea</Button>}
+        actions={
+          <Button onClick={() => setCreating(true)}>
+            <Plus aria-hidden="true" size={20} />
+            Nueva tarea
+          </Button>
+        }
       />
 
       <div className="flex flex-wrap items-end gap-x-6 gap-y-2">
-        <div className="w-56">
+        <div className="w-full min-w-0 sm:w-56">
           <SelectField
             label="Mostrar"
             value={filter}
@@ -211,7 +220,7 @@ export function TasksPage() {
       {tasks.isPending && <Loading />}
       {tasks.error && <ErrorNotice message={errorMessage(tasks.error)} />}
       {tasks.data && visible.length === 0 && (
-        <EmptyState title="No hay tareas que mostrar">
+        <EmptyState title="No hay tareas que mostrar" icon={ListChecks}>
           Cambia el filtro o crea una tarea nueva.
         </EmptyState>
       )}
@@ -219,43 +228,73 @@ export function TasksPage() {
       <ul className="flex flex-col gap-3">
         {visible.map((task) => {
           const done = Boolean(task.date_done);
+          const state = dueState(task.date_assigned);
+          const assigneeName = task.roomie?.first_name ?? "Un compi";
           return (
             <li
               key={task.id}
-              className="flex flex-col gap-3 rounded-card border border-line bg-surface p-4 sm:flex-row sm:items-center sm:justify-between"
+              className="flex items-center gap-3 rounded-card border border-line bg-surface p-4 shadow-card sm:gap-4"
             >
-              <div className="flex flex-col gap-1">
-                <p className={done ? "font-semibold line-through" : "font-semibold"}>{task.name}</p>
-                <p className="text-muted">
-                  {task.roomie_id === roomie.id ? "Tú" : (task.roomie?.first_name ?? "Un compi")} ·{" "}
-                  {done && task.date_done
-                    ? `Hecha el ${formatDay(task.date_done)}`
-                    : `Para el ${formatDay(task.date_assigned)}`}
-                </p>
-              </div>
-              <div className="flex flex-wrap items-center gap-2">
-                {done ? (
-                  <Badge tone="brand">Hecha</Badge>
-                ) : (
-                  <>
-                    <Button
-                      loading={complete.isPending && complete.variables === task.id}
-                      onClick={() =>
-                        complete.mutate(task.id, {
-                          onSuccess: () => toast.success(`«${task.name}» marcada como hecha.`),
-                          onError: (caught) => toast.error(errorMessage(caught)),
-                        })
-                      }
-                    >
-                      Marcar hecha
-                    </Button>
-                    <Button variant="secondary" onClick={() => setRescheduling(task)}>
-                      Cambiar fecha
-                    </Button>
-                  </>
+              <button
+                type="button"
+                disabled={done || (complete.isPending && complete.variables === task.id)}
+                aria-label={
+                  done ? `«${task.name}» ya está hecha` : `Marcar «${task.name}» como hecha`
+                }
+                onClick={() =>
+                  complete.mutate(task.id, {
+                    onSuccess: () => toast.success(`«${task.name}» marcada como hecha.`),
+                    onError: (caught) => toast.error(errorMessage(caught)),
+                  })
+                }
+                className={cx(
+                  "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2",
+                  done
+                    ? "border-brand bg-brand text-on-brand"
+                    : "border-control bg-surface text-transparent hover:border-brand hover:text-brand",
                 )}
-                <Button variant="danger" onClick={() => setDeleting(task)}>
-                  Eliminar
+              >
+                <Check aria-hidden="true" size={22} />
+              </button>
+
+              <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+                <p className={cx("break-words font-semibold", done && "text-muted line-through")}>
+                  {task.name}
+                </p>
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted">
+                  <span className="flex items-center gap-2">
+                    <Avatar name={assigneeName} size="sm" />
+                    {task.roomie_id === roomie.id ? "Tú" : assigneeName}
+                  </span>
+                  <span>
+                    {done && task.date_done
+                      ? `Hecha el ${formatDay(task.date_done)}`
+                      : formatDay(task.date_assigned)}
+                  </span>
+                  {!done && state !== "later" && (
+                    <Badge tone={state === "overdue" ? "danger" : "sun"}>{DUE_LABEL[state]}</Badge>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex shrink-0 items-center">
+                {!done && (
+                  <Button
+                    variant="ghost"
+                    className="h-11 w-11 !p-0"
+                    aria-label={`Cambiar la fecha de «${task.name}»`}
+                    onClick={() => setRescheduling(task)}
+                  >
+                    <CalendarClock aria-hidden="true" size={20} />
+                  </Button>
+                )}
+                <Button
+                  variant="ghost"
+                  className="h-11 w-11 !p-0 text-danger"
+                  aria-label={`Eliminar «${task.name}»`}
+                  onClick={() => setDeleting(task)}
+                >
+                  <Trash2 aria-hidden="true" size={20} />
                 </Button>
               </div>
             </li>

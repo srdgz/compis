@@ -3,14 +3,16 @@ import type { FormEvent } from "react";
 
 import { useAuth } from "@/features/auth/AuthProvider";
 import { isValidPaypalUsername } from "@/features/finance/paypal";
+import { fullName } from "@/features/roomies/api";
 import type { Roomie } from "@/features/roomies/api";
 import { useCurrentRoomie, useDeactivateAccount, useUpdateProfile } from "@/features/roomies/hooks";
 import { errorMessage } from "@/shared/api/http";
 import { useDocumentTitle } from "@/shared/lib/useDocumentTitle";
+import { Avatar } from "@/shared/ui/Avatar";
 import { Button } from "@/shared/ui/Button";
 import { ConfirmDialog } from "@/shared/ui/Dialog";
-import { TextField } from "@/shared/ui/Field";
 import { Card, ErrorNotice, Loading, PageHeader } from "@/shared/ui/Feedback";
+import { PasswordField, TextField } from "@/shared/ui/Field";
 import { useToast } from "@/shared/ui/Toast";
 
 const PAYPAL_LINK_PREFIX = /^(?:https?:\/\/)?(?:www\.)?paypal\.me\//i;
@@ -64,19 +66,21 @@ function ProfileForm({ roomie }: { roomie: Roomie }) {
       <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
         {error && <ErrorNotice message={error} />}
         <TextField label="Correo electrónico" value={roomie.email} readOnly />
-        <TextField
-          label="Nombre"
-          autoComplete="given-name"
-          required
-          value={firstName}
-          onChange={(event) => setFirstName(event.target.value)}
-        />
-        <TextField
-          label="Apellidos"
-          autoComplete="family-name"
-          value={lastName}
-          onChange={(event) => setLastName(event.target.value)}
-        />
+        <div className="grid gap-4 sm:grid-cols-2">
+          <TextField
+            label="Nombre"
+            autoComplete="given-name"
+            required
+            value={firstName}
+            onChange={(event) => setFirstName(event.target.value)}
+          />
+          <TextField
+            label="Apellidos"
+            autoComplete="family-name"
+            value={lastName}
+            onChange={(event) => setLastName(event.target.value)}
+          />
+        </div>
         <TextField
           label="Usuario de PayPal.Me"
           hint="Tu nombre de usuario de paypal.me, por ejemplo «lucia». También puedes pegar el enlace completo. Tus compis lo usarán para pagarte."
@@ -84,17 +88,18 @@ function ProfileForm({ roomie }: { roomie: Roomie }) {
           value={paypal}
           onChange={(event) => setPaypal(event.target.value)}
         />
-        <TextField
+        <PasswordField
           label="Nueva contraseña"
-          type="password"
           autoComplete="new-password"
           hint="Déjala vacía si no quieres cambiarla."
           value={password}
           onChange={(event) => setPassword(event.target.value)}
         />
-        <Button type="submit" loading={update.isPending}>
-          Guardar cambios
-        </Button>
+        <div>
+          <Button type="submit" loading={update.isPending}>
+            Guardar cambios
+          </Button>
+        </div>
       </form>
     </Card>
   );
@@ -147,11 +152,18 @@ export function ProfilePage() {
 
   return (
     <>
-      <PageHeader title="Mi perfil" />
+      <PageHeader eyebrow="Cuenta" title="Mi perfil" />
       {isPending && <Loading />}
       {error && <ErrorNotice message={errorMessage(error)} />}
       {roomie && (
         <div className="flex flex-col gap-6">
+          <div className="flex items-center gap-4 rounded-card border border-line bg-surface p-5 shadow-card">
+            <Avatar name={roomie.first_name} size="xl" />
+            <div className="min-w-0">
+              <p className="break-words font-display text-2xl font-semibold">{fullName(roomie)}</p>
+              <p className="break-all text-muted">{roomie.email}</p>
+            </div>
+          </div>
           <ProfileForm key={roomie.id} roomie={roomie} />
           <DeleteAccount roomie={roomie} />
         </div>

@@ -52,6 +52,11 @@ const GRAPHIC_PAIRS: Array<[string, string]> = [
   ["ink", "bg"],
 ];
 
+const AVATAR_PAIRS: Array<[string, string]> = [1, 2, 3, 4, 5, 6].map((n) => [
+  `av${n}-fg`,
+  `av${n}-bg`,
+]);
+
 const themes: Record<string, Theme> = {
   light: block(":root"),
   "dark (explicit)": block(':root[data-theme="dark"]'),
@@ -60,6 +65,10 @@ const themes: Record<string, Theme> = {
 
 describe.each(Object.entries(themes))("%s theme", (_name, theme) => {
   it.each(TEXT_PAIRS)("text %s on %s reaches 4.5:1", (foreground, background) => {
+    expect(contrast(theme[foreground]!, theme[background]!)).toBeGreaterThanOrEqual(4.5);
+  });
+
+  it.each(AVATAR_PAIRS)("avatar text %s on %s reaches 4.5:1", (foreground, background) => {
     expect(contrast(theme[foreground]!, theme[background]!)).toBeGreaterThanOrEqual(4.5);
   });
 

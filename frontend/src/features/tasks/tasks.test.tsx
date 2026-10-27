@@ -61,7 +61,9 @@ describe("TasksPage", () => {
     renderApp("/tasks", true);
 
     const row = (await screen.findByText("Sacar la basura")).closest("li") as HTMLElement;
-    await user.click(within(row).getByRole("button", { name: "Marcar hecha" }));
+    await user.click(
+      within(row).getByRole("button", { name: "Marcar «Sacar la basura» como hecha" }),
+    );
     expect(await screen.findByText(/marcada como hecha/)).toBeInTheDocument();
     expect(completed).toBe(true);
   });

@@ -1,3 +1,4 @@
+import { UserMinus, UserPlus } from "lucide-react";
 import { useState } from "react";
 import type { FormEvent } from "react";
 
@@ -5,10 +6,11 @@ import { useHomeContext } from "@/features/homes/context";
 import { useAddRoomie, useRemoveRoomie } from "@/features/homes/hooks";
 import { errorMessage } from "@/shared/api/http";
 import { useDocumentTitle } from "@/shared/lib/useDocumentTitle";
+import { Avatar } from "@/shared/ui/Avatar";
 import { Button } from "@/shared/ui/Button";
 import { ConfirmDialog } from "@/shared/ui/Dialog";
-import { TextField } from "@/shared/ui/Field";
 import { Badge, Card, ErrorNotice, Loading, PageHeader } from "@/shared/ui/Feedback";
+import { TextField } from "@/shared/ui/Field";
 import { useToast } from "@/shared/ui/Toast";
 
 import { fullName } from "../api";
@@ -40,7 +42,11 @@ export function RoomiesPage() {
 
   return (
     <>
-      <PageHeader title="Roomies" description="Las personas que vivís en la casa." />
+      <PageHeader
+        eyebrow="Hogar"
+        title="Roomies"
+        description="Las personas que vivís en la casa."
+      />
 
       {roomies.isPending && <Loading />}
       {roomies.error && <ErrorNotice message={errorMessage(roomies.error)} />}
@@ -49,18 +55,25 @@ export function RoomiesPage() {
         {(roomies.data ?? []).map((member) => (
           <li
             key={member.id}
-            className="flex flex-col gap-3 rounded-card border border-line bg-surface p-5"
+            className="flex flex-col gap-4 rounded-card border border-line bg-surface p-5 shadow-card"
           >
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <p className="font-display text-xl font-bold">
-                {fullName(member)}
-                {member.id === roomie.id ? " (tú)" : ""}
-              </p>
-              {member.admin && <Badge tone="brand">Administrador</Badge>}
+            <div className="flex items-center gap-4">
+              <Avatar name={member.first_name} size="lg" />
+              <div className="min-w-0 flex-1">
+                <p className="break-words font-display text-xl font-semibold">
+                  {fullName(member)}
+                  {member.id === roomie.id ? " (tú)" : ""}
+                </p>
+                <p className="break-all text-sm text-muted">{member.email}</p>
+              </div>
             </div>
-            <p className="break-all text-muted">{member.email}</p>
+            <div className="flex flex-wrap items-center gap-2">
+              {member.admin && <Badge tone="brand">Administrador</Badge>}
+              {member.paypal_username && <Badge>PayPal.Me</Badge>}
+            </div>
             {roomie.admin && member.id !== roomie.id && (
               <Button variant="danger" onClick={() => setRemoving(member)}>
+                <UserMinus aria-hidden="true" size={18} />
                 Quitar de la vivienda
               </Button>
             )}
@@ -81,9 +94,12 @@ export function RoomiesPage() {
               value={email}
               onChange={(event) => setEmail(event.target.value)}
             />
-            <Button type="submit" loading={add.isPending}>
-              Añadir roomie
-            </Button>
+            <div>
+              <Button type="submit" loading={add.isPending}>
+                <UserPlus aria-hidden="true" size={18} />
+                Añadir roomie
+              </Button>
+            </div>
           </form>
         </Card>
       )}
