@@ -17,3 +17,9 @@ public/index.html
 Thumbs.db
 .idea/
 .vscode/
+*.db
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
