@@ -2,12 +2,22 @@ version: 2
 
 updates:
   - package-ecosystem: pip
-    directory: /backend
+    directory: /
     schedule:
       interval: weekly
     open-pull-requests-limit: 3
     groups:
       python-dependencies:
+        patterns:
+          - "*"
+
+  - package-ecosystem: pip
+    directory: /backend
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+    groups:
+      python-dev-tooling:
         patterns:
           - "*"
 

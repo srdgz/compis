@@ -42,7 +42,9 @@ def test_vercel_configuration_matches_the_project_layout():
     assert (REPO / "api" / "index.py").exists()
     cron = config["crons"][0]
     assert cron["path"] == "/api/cron/digest"
-    root = (REPO / "requirements.txt").read_text(encoding="utf-8").split()
-    backend = (REPO / "backend" / "requirements.txt").read_text(encoding="utf-8").split()
-    assert root == backend
+    runtime = (REPO / "requirements.txt").read_text(encoding="utf-8").splitlines()
+    assert not [line for line in runtime if line.startswith("-")]
+    dev = (REPO / "backend" / "requirements-dev.txt").read_text(encoding="utf-8")
+    assert dev.splitlines()[0] == "-r ../requirements.txt"
+    assert not (REPO / "backend" / "requirements.txt").exists()
     assert sys.version_info >= (3, 12)
