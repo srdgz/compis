@@ -8,7 +8,7 @@ Compis es una aplicación web para gestionar la vida en un piso compartido: tare
 
 [![CI](https://github.com/srdgz/compis/actions/workflows/ci.yml/badge.svg)](https://github.com/srdgz/compis/actions/workflows/ci.yml)
 
-**Demo:** [compis.vercel.app](https://compis.vercel.app). Pulsa «Probar con una cuenta de demostración» o entra con cualquiera de estas cuentas (la contraseña es la misma para las tres):
+**Demo:** [compis-app.vercel.app](https://compis-app.vercel.app). Pulsa «Probar con una cuenta de demostración» o entra con cualquiera de estas cuentas (la contraseña es la misma para las tres):
 
 | Cuenta | Contraseña |
 | --- | --- |
