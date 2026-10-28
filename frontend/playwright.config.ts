@@ -17,7 +17,18 @@ export default defineConfig({
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
   },
-  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
+  projects: [
+    {
+      name: "chromium",
+      use: { ...devices["Desktop Chrome"] },
+      testIgnore: /screenshots\.spec\.ts/,
+    },
+    {
+      name: "screenshots",
+      use: { ...devices["Desktop Chrome"] },
+      testMatch: /screenshots\.spec\.ts/,
+    },
+  ],
   webServer: [
     {
       command: "node e2e/start-backend.mjs",
