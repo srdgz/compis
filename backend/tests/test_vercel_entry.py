@@ -35,6 +35,7 @@ def test_vercel_cron_authenticates_with_the_bearer_secret(monkeypatch):
 def test_vercel_configuration_matches_the_project_layout():
     config = json.loads((REPO / "vercel.json").read_text(encoding="utf-8"))
     assert config["outputDirectory"] == "frontend/dist"
+    assert config["regions"] == ["fra1"]
     assert (REPO / "frontend" / "package.json").exists()
     assert {"source": "/api/(.*)", "destination": "/api/index"} in config["rewrites"]
     assert config["rewrites"][-1]["destination"] == "/index.html"
