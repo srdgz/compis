@@ -8,7 +8,7 @@ Compis is a web app for running a shared flat: tasks, a shopping list, expenses,
 
 [![CI](https://github.com/srdgz/compis/actions/workflows/ci.yml/badge.svg)](https://github.com/srdgz/compis/actions/workflows/ci.yml)
 
-**Demo:** [compis.vercel.app](https://compis.vercel.app). Press "Probar con una cuenta de demostración" (try a demo account) or sign in with any of these accounts (the password is the same for all three):
+**Demo:** [compis-app.vercel.app](https://compis-app.vercel.app). Press "Probar con una cuenta de demostración" (try a demo account) or sign in with any of these accounts (the password is the same for all three):
 
 | Account | Password |
 | --- | --- |
