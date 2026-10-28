@@ -24,7 +24,7 @@ describe("responsive navigation", () => {
       "Calendario",
       "Archivos",
       "Novedades",
-      "Roomies",
+      "Compis",
       "Mi perfil",
     ]);
     expect(screen.getByRole("group", { name: "Tema" })).toBeInTheDocument();

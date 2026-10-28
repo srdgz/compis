@@ -10,7 +10,7 @@ const PAGES = [
   "/calendar",
   "/files",
   "/activity",
-  "/roomies",
+  "/compis",
   "/profile",
 ];
 

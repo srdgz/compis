@@ -53,24 +53,24 @@ test.describe("running the household", () => {
     await expect(page.getByText("Te deben en total").locator("..")).toContainText("22,95");
   });
 
-  test("only the administrator can add and remove roomies", async ({ browser, request }) => {
+  test("only the administrator can add and remove compis", async ({ browser, request }) => {
     const flat = await createFlat(request);
     const ownerPage = await (await browser.newContext()).newPage();
     await signIn(ownerPage, flat.owner);
-    await ownerPage.goto("/roomies");
+    await ownerPage.goto("/compis");
     await expect(ownerPage.getByText("Añadir a alguien")).toBeVisible();
     await expect(ownerPage.getByRole("button", { name: "Quitar de la vivienda" })).toBeVisible();
 
     const matePage = await (await browser.newContext()).newPage();
     await signIn(matePage, flat.mate);
-    await matePage.goto("/roomies");
-    await expect(matePage.getByRole("heading", { name: "Roomies" })).toBeVisible();
+    await matePage.goto("/compis");
+    await expect(matePage.getByRole("heading", { name: "Compis" })).toBeVisible();
     await expect(matePage.getByText("Añadir a alguien")).toHaveCount(0);
     await expect(matePage.getByRole("button", { name: "Quitar de la vivienda" })).toHaveCount(0);
 
     await ownerPage.getByRole("button", { name: "Quitar de la vivienda" }).click();
     await ownerPage.getByRole("dialog").getByRole("button", { name: "Quitar" }).click();
-    await expect(ownerPage.getByText("Roomie quitado de la vivienda.")).toBeVisible();
+    await expect(ownerPage.getByText("Compi quitado de la vivienda.")).toBeVisible();
   });
 
   test("the activity feed and calendar reflect what happened", async ({ page, request }) => {

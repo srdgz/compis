@@ -72,8 +72,10 @@ class RoomieService:
         if actor.id != roomie_id:
             raise PermissionDeniedError("Solo puedes eliminar tu propia cuenta")
         if actor.home_id is not None:
-            raise PermissionDeniedError("No puedes desactivar a un roomie asociado a una vivienda")
-        tag = f"roomieeliminado{actor.id}"
+            raise PermissionDeniedError(
+                "Para eliminar tu cuenta primero tienes que salir de la vivienda"
+            )
+        tag = f"compi-eliminado-{actor.id}"
         actor.email = f"{tag}@compis.invalid"
         actor.password_hash = ""
         actor.first_name = tag

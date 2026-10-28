@@ -83,7 +83,7 @@ def test_activity_feed_records_changes(flat):
     feed = flat["aitana"].get(f"/api/blog/home/{flat['home_id']}").get_json()
     texts = [entry["text"] for entry in feed]
     assert "Nueva tarea asignada: Sacar la basura" in texts
-    assert "Nuevo roomie agregado: Aitana" in texts
+    assert "Nuevo compi agregado: Aitana" in texts
 
 
 def test_calendar_shows_own_tasks_and_debts_only(flat):

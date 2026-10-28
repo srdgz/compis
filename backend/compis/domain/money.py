@@ -21,7 +21,7 @@ def to_euros(cents: int | None) -> float | None:
 
 def split_equally(total_cents: int, debtor_count: int) -> int:
     if debtor_count < 1:
-        raise ValidationError("Selecciona al menos un roomie")
+        raise ValidationError("Selecciona al menos un compi")
     return total_cents // (debtor_count + 1)
 
 

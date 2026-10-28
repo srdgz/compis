@@ -13,7 +13,7 @@ def load_actor(uow: UnitOfWork, actor_id: int) -> Roomie:
 def load_roomie(uow: UnitOfWork, roomie_id: int) -> Roomie:
     roomie = uow.roomies.get(roomie_id)
     if roomie is None:
-        raise NotFoundError("Este roomie no existe")
+        raise NotFoundError("Este compi no existe")
     return roomie
 
 
@@ -30,4 +30,4 @@ def require_admin(actor: Roomie, home_id: int) -> None:
 
 def require_can_manage(actor: Roomie, other: Roomie) -> None:
     if not actor.can_manage(other):
-        raise PermissionDeniedError("No tienes permiso para acceder a este roomie")
+        raise PermissionDeniedError("No tienes permiso para acceder a este compi")

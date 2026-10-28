@@ -36,7 +36,7 @@ Los datos de la demo se recrean cada semana.
 
 ## Funcionalidades
 
-- **Vivienda y roomies.** Quien crea la vivienda es su administrador y puede añadir o quitar compañeros por correo. Cada persona puede tener foto de perfil.
+- **Vivienda y compis.** Quien crea la vivienda es su administrador y puede añadir o quitar compañeros por correo. Cada persona puede tener foto de perfil.
 - **Tareas.** Se asignan a un compañero con fecha, se completan, se reprograman y se eliminan. Las vencidas y las de hoy se destacan.
 - **Lista de la compra.** Lista compartida. Al marcar lo comprado se registra un gasto.
 - **Gastos y deudas.** Un gasto se reparte a partes iguales entre quienes elijas, con una vista previa de lo que toca a cada uno. El céntimo sobrante lo asume quien pagó.
@@ -202,7 +202,7 @@ Todas las rutas cuelgan de `/api` y exigen sesión salvo las de acceso, `health`
 | Área | Rutas |
 | --- | --- |
 | Acceso | `POST /signup`, `POST /login`, `POST /logout` |
-| Roomies | `GET /roomie/{id}`, `GET /roomie/home/{id}`, `PUT /roomie/{id}`, `PUT /roomie/delete/{id}` |
+| Compis | `GET /roomie/{id}`, `GET /roomie/home/{id}`, `PUT /roomie/{id}`, `PUT /roomie/delete/{id}` |
 | Vivienda | `GET /home/{id}`, `POST /home`, `POST /home/{id}`, `DELETE /home/{id}/{roomie}`, `PUT /home/{id}` |
 | Tareas | `GET /task/home/{id}`, `GET /task/roomie/{id}`, `POST /task`, `PUT /task/{id}`, `PUT /task/date/{id}`, `DELETE /task/{id}` |
 | Compra | `GET /list/home/{id}`, `GET /item/list/{id}`, `POST /item`, `DELETE /item/{id}` |
