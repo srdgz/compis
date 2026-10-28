@@ -9,11 +9,19 @@ def _flag(name: str, default: bool = False) -> bool:
     return value.strip().lower() in {"1", "true", "yes", "on"}
 
 
-def _database_url() -> str:
-    url = os.getenv("DATABASE_URL", "sqlite:///compis.db")
-    if url.startswith("postgres://"):
-        return url.replace("postgres://", "postgresql://", 1)
+POSTGRES_DRIVER = "postgresql+psycopg2://"
+POSTGRES_PREFIXES = ("postgresql+psycopg2://", "postgresql://", "postgres://")
+
+
+def normalise_database_url(url: str) -> str:
+    for prefix in POSTGRES_PREFIXES:
+        if url.startswith(prefix):
+            return POSTGRES_DRIVER + url[len(prefix) :]
     return url
+
+
+def _database_url() -> str:
+    return normalise_database_url(os.getenv("DATABASE_URL", "sqlite:///compis.db"))
 
 
 @dataclass(frozen=True)
