@@ -1,121 +1,123 @@
 # Compis
 
-**Casa compartida, cuentas claras.**
+**English** | [Español](README.es.md)
 
-Compis es una aplicación web para gestionar la vida en un piso compartido: tareas, lista de la compra, gastos, deudas entre compañeros, calendario y archivos. Se puede instalar como app en el móvil y cumple las pautas de accesibilidad WCAG 2.2 de nivel AA.
+**Casa compartida, cuentas claras.** (Shared home, clear accounts.)
+
+Compis is a web app for running a shared flat: tasks, a shopping list, expenses, debts between flatmates, a calendar and files. It can be installed as a phone app and follows the WCAG 2.2 level AA accessibility guidelines.
 
 [![CI](https://github.com/srdgz/compis/actions/workflows/ci.yml/badge.svg)](https://github.com/srdgz/compis/actions/workflows/ci.yml)
 
-**Demo:** [compis.vercel.app](https://compis.vercel.app). Pulsa «Probar con una cuenta de demostración» o entra con cualquiera de estas cuentas (la contraseña es la misma para las tres):
+**Demo:** [compis.vercel.app](https://compis.vercel.app). Press "Probar con una cuenta de demostración" (try a demo account) or sign in with any of these accounts (the password is the same for all three):
 
-| Cuenta | Contraseña |
+| Account | Password |
 | --- | --- |
 | `lucia@demo.compis.app` | `compis-demo-2026` |
 | `marcos@demo.compis.app` | `compis-demo-2026` |
 | `aitana@demo.compis.app` | `compis-demo-2026` |
 
-Los datos de la demo se recrean cada semana.
+Demo data is recreated every week. The interface is currently in Spanish.
 
-## Capturas
+## Screenshots
 
-| Acceso | Inicio |
+| Sign in | Home |
 | --- | --- |
-| ![Pantalla de acceso con una ilustración de un salón](docs/screenshots/login.webp) | ![Panel de inicio en tema claro](docs/screenshots/dashboard-light.webp) |
+| ![Sign-in page with an illustration of a living room](docs/screenshots/login.webp) | ![Home dashboard in the light theme](docs/screenshots/dashboard-light.webp) |
 
-| Tareas | Gastos y deudas |
+| Tasks | Expenses and debts |
 | --- | --- |
-| ![Lista de tareas con fechas y responsables](docs/screenshots/tasks.webp) | ![Gastos pendientes de repartir y deudas con su estado](docs/screenshots/expenses.webp) |
+| ![Task list with dates and assignees](docs/screenshots/tasks.webp) | ![Expenses waiting to be split and debts with their status](docs/screenshots/expenses.webp) |
 
-| Pagar una deuda | Tema oscuro |
+| Paying a debt | Dark theme |
 | --- | --- |
-| ![Diálogo para pagar una deuda](docs/screenshots/pay-dialog.webp) | ![Panel de inicio en tema oscuro](docs/screenshots/dashboard-dark.webp) |
+| ![Dialog for paying a debt](docs/screenshots/pay-dialog.webp) | ![Home dashboard in the dark theme](docs/screenshots/dashboard-dark.webp) |
 
-| Móvil: inicio | Móvil: menú |
+| Mobile: home | Mobile: menu |
 | --- | --- |
-| ![Inicio en un móvil con barra de navegación inferior](docs/screenshots/mobile-dashboard.webp) | ![Hoja con el resto de secciones en el móvil](docs/screenshots/mobile-menu.webp) |
+| ![Home on a phone with a bottom navigation bar](docs/screenshots/mobile-dashboard.webp) | ![Sheet with the remaining sections on a phone](docs/screenshots/mobile-menu.webp) |
 
-## Funcionalidades
+## Features
 
-- **Vivienda y compis.** Quien crea la vivienda es su administrador y puede añadir o quitar compañeros por correo. Cada persona puede tener foto de perfil.
-- **Tareas.** Se asignan a un compañero con fecha, se completan, se reprograman y se eliminan. Las vencidas y las de hoy se destacan.
-- **Lista de la compra.** Lista compartida. Al marcar lo comprado se registra un gasto.
-- **Gastos y deudas.** Un gasto se reparte a partes iguales entre quienes elijas, con una vista previa de lo que toca a cada uno. El céntimo sobrante lo asume quien pagó.
-- **Pagos entre compañeros.** El deudor paga con PayPal.Me o en efectivo y avisa; el acreedor confirma o rechaza el pago. Más abajo se explica por qué.
-- **Calendario y novedades.** Tareas y vencimientos por mes, y un registro de lo que va pasando en la casa.
-- **Archivos.** Contratos, facturas y tickets, subidos a Cloudinary.
-- **Resumen diario por correo** de la actividad de la vivienda.
-- **Aplicación instalable (PWA)** con un shell que funciona sin conexión.
-- **Tema automático, claro u oscuro** y diseño adaptado a cualquier pantalla.
+- **Home and flatmates.** Whoever creates the home becomes its administrator and can add or remove flatmates by email. Everyone can have a profile picture.
+- **Tasks.** Assigned to a flatmate with a date, then completed, rescheduled or deleted. Overdue tasks and tasks due today stand out.
+- **Shopping list.** A shared list. Marking items as bought records an expense.
+- **Expenses and debts.** An expense is split equally among the people you choose, with a preview of each share. Whoever paid absorbs any leftover cent.
+- **Payments between flatmates.** The debtor pays with PayPal.Me or in cash and reports it; the creditor confirms or rejects the payment. See below for why it works this way.
+- **Calendar and activity.** Tasks and due dates by month, plus a log of what happens in the home.
+- **Files.** Contracts, bills and receipts, uploaded to Cloudinary.
+- **Daily email digest** of the home's activity.
+- **Installable app (PWA)** with a shell that works offline.
+- **Automatic, light or dark theme** and a layout that adapts to any screen.
 
-## Tecnologías
+## Tech stack
 
-| Capa | Tecnología |
+| Layer | Technology |
 | --- | --- |
 | Frontend | React 18, TypeScript, Vite, React Router, TanStack Query, Zod, Tailwind CSS |
 | Backend | Python 3.12, Flask 3, SQLAlchemy 2, Alembic, Pydantic, JWT |
-| Base de datos | PostgreSQL (Neon) en producción, SQLite en local y en tests |
-| Pruebas | pytest, Vitest, Testing Library, MSW, Playwright, axe-core |
-| Calidad | ruff, mypy, ESLint, Prettier |
+| Database | PostgreSQL (Neon) in production, SQLite locally and in tests |
+| Testing | pytest, Vitest, Testing Library, MSW, Playwright, axe-core |
+| Quality | ruff, mypy, ESLint, Prettier |
 | CI/CD | GitHub Actions, Dependabot, Vercel |
-| Servicios | PayPal Sandbox, Cloudinary, SMTP |
+| Services | PayPal Sandbox, Cloudinary, SMTP |
 
-## Arquitectura
+## Architecture
 
-El backend sigue una arquitectura limpia: las capas internas no conocen a las externas. Un test automático comprueba que `domain` y `application` no importan Flask, SQLAlchemy ni las capas exteriores.
+The backend follows a clean architecture: inner layers know nothing about outer ones. An automated test checks that `domain` and `application` never import Flask, SQLAlchemy or the outer layers.
 
 ```mermaid
 flowchart LR
-    http["interfaces/http<br/>Flask, Pydantic, JWT"] --> app["application<br/>casos de uso y puertos"]
-    infra["infrastructure<br/>SQLAlchemy, bcrypt, PayPal, correo"] -.implementa.-> app
-    app --> domain["domain<br/>entidades y reglas"]
+    http["interfaces/http<br/>Flask, Pydantic, JWT"] --> app["application<br/>use cases and ports"]
+    infra["infrastructure<br/>SQLAlchemy, bcrypt, PayPal, email"] -.implements.-> app
+    app --> domain["domain<br/>entities and rules"]
 ```
 
-- **`domain`**: entidades, errores y reglas puras, como el reparto de importes en céntimos y las transiciones de estado de una deuda.
-- **`application`**: servicios (casos de uso) que comprueban permisos y orquestan, y los puertos que describen lo que necesitan del exterior.
-- **`infrastructure`**: modelos y repositorios SQLAlchemy, unidad de trabajo, hash de contraseñas, pasarela de PayPal y correo.
-- **`interfaces`**: blueprints de Flask, validación de entrada, serializadores y comandos de consola.
+- **`domain`**: entities, errors and pure rules, such as splitting amounts in cents and the debt state transitions.
+- **`application`**: services (use cases) that check permissions and orchestrate, and the ports that describe what they need from the outside.
+- **`infrastructure`**: SQLAlchemy models and repositories, unit of work, password hashing, the PayPal gateway and email.
+- **`interfaces`**: Flask blueprints, input validation, serializers and console commands.
 
-El frontend se organiza por funcionalidad (`features/<área>`), cada una con su cliente de API, sus hooks de datos y sus páginas. Las respuestas del servidor se validan en tiempo de ejecución con Zod.
+The frontend is organised by feature (`features/<area>`), each with its own API client, data hooks and pages. Server responses are validated at runtime with Zod.
 
-## Pagos entre compañeros
+## Payments between flatmates
 
-PayPal cobra siempre a una cuenta de comercio, así que no permite pagos directos entre particulares desde una aplicación sin que cada usuario pase por un proceso de alta de empresa. Por eso Compis separa dos cosas:
+PayPal always charges a merchant account, so it does not allow direct payments between individuals from an app unless every user goes through a business onboarding process. That is why Compis keeps two things apart:
 
-- **Pago real: PayPal.Me, efectivo y confirmación.** Cada persona guarda su usuario de [PayPal.Me](https://www.paypal.me). Al pagar, la aplicación abre `paypal.me/usuario/importeEUR` con la cantidad ya rellenada. Después el deudor avisa de que ha pagado y el acreedor lo confirma o lo rechaza. La deuda pasa por tres estados: pendiente, comunicada y saldada. Nadie puede saldar su propia deuda sin que el acreedor lo confirme.
-- **Modo demostración: PayPal Sandbox.** Si el servidor tiene credenciales de Sandbox, el diálogo de pago muestra los botones de PayPal. El pedido se crea y se captura en el servidor, que solo salda la deuda si el estado, el importe, la moneda y la referencia coinciden. El código solo habla con el entorno de pruebas, y el dinero es ficticio.
+- **Real payment: PayPal.Me, cash and confirmation.** Each person saves their [PayPal.Me](https://www.paypal.me) username. When paying, the app opens `paypal.me/username/amountEUR` with the amount already filled in. The debtor then reports the payment and the creditor confirms or rejects it. A debt goes through three states: pending, reported and settled. Nobody can settle their own debt without the creditor's confirmation.
+- **Demo mode: PayPal Sandbox.** If the server has Sandbox credentials, the payment dialog shows the PayPal buttons. The order is created and captured on the server, which only settles the debt when status, amount, currency and reference all match. The code only talks to the test environment, and the money is fake.
 
-## Accesibilidad y diseño responsive
+## Accessibility and responsive design
 
-- Se diseñó para WCAG 2.2 nivel AA: contraste de texto de al menos 4,5:1 y de controles de al menos 3:1 en los tres modos de color (un test lo verifica), foco visible, objetivos táctiles amplios, navegación completa por teclado, enlace para saltar al contenido, diálogos nativos con foco atrapado, anuncios de estado y errores asociados a su campo.
-- axe-core revisa todas las páginas y diálogos en tests unitarios y, con comprobación real de contraste, en el navegador, en tema claro y oscuro.
-- La interfaz se adapta a seis tamaños de pantalla, desde 320 px hasta Full HD y móvil en horizontal. Hay menú lateral en pantallas grandes y barra inferior con una hoja «Más» en las pequeñas. Las pruebas comprueban que ninguna página desborda horizontalmente.
-- Las páginas de acceso siguen siempre el tema del navegador. El tema se elige desde el menú lateral.
+- Designed for WCAG 2.2 level AA: text contrast of at least 4.5:1 and control contrast of at least 3:1 in all three colour modes (a test verifies it), visible focus, generous touch targets, full keyboard navigation, a skip link, native dialogs that trap focus, status announcements and errors tied to their fields.
+- axe-core checks every page and dialog in unit tests and, with real contrast checks, in the browser, in the light and dark themes.
+- The interface adapts to six screen sizes, from 320 px up to Full HD and phones in landscape. There is a sidebar on large screens and a bottom bar with a "More" sheet on small ones. The tests check that no page overflows horizontally.
+- The sign-in pages always follow the browser theme. The theme is chosen from the sidebar.
 
-Axe detecta solo una parte de los problemas posibles. Una revisión manual con lector de pantalla sigue siendo recomendable.
+Axe finds only part of the possible problems. A manual review with a screen reader is still recommended.
 
-## Seguridad
+## Security
 
-- Todos los datos exigen sesión y pertenecer a la vivienda. Los permisos se comprueban en la capa de aplicación, no en el cliente.
-- El token solo contiene el identificador de la persona; el rol y la vivienda se leen de la base de datos.
-- Contraseñas con bcrypt, de al menos ocho caracteres, y límites en los enlaces de imágenes y archivos, que solo se aceptan si apuntan a tu cuenta de Cloudinary.
-- Importes guardados en céntimos enteros.
-- El resumen diario se dispara con un secreto que Vercel Cron envía como cabecera.
+- All data requires a session and membership of the home. Permissions are checked in the application layer, not in the client.
+- The token only holds the person's identifier; the role and home are read from the database.
+- Passwords are hashed with bcrypt and must be at least eight characters. Image and file links are limited and only accepted if they point to your Cloudinary account.
+- Amounts are stored as whole cents.
+- The daily digest is triggered with a secret that Vercel Cron sends as a header.
 
-## Empezar en local
+## Getting started locally
 
-Necesitas Python 3.12 o superior y Node 22 o superior.
+You need Python 3.12 or later and Node 22 or later.
 
 ### Backend
 
 ```bash
 python -m venv .venv
-.venv/Scripts/activate        # en macOS y Linux: source .venv/bin/activate
+.venv/Scripts/activate        # on macOS and Linux: source .venv/bin/activate
 pip install -r backend/requirements-dev.txt
 cd backend
-cp .env.example .env          # en PowerShell: Copy-Item .env.example .env
+cp .env.example .env          # in PowerShell: Copy-Item .env.example .env
 ```
 
-Edita `backend/.env` y pon una `JWT_SECRET_KEY` de al menos 32 caracteres. Puedes generarla con `python -c "import secrets; print(secrets.token_urlsafe(48))"`. Después:
+Edit `backend/.env` and set a `JWT_SECRET_KEY` of at least 32 characters. You can generate one with `python -c "import secrets; print(secrets.token_urlsafe(48))"`. Then:
 
 ```bash
 flask --app compis.bootstrap:create_app db upgrade
@@ -131,37 +133,37 @@ npm install
 npm run dev
 ```
 
-Abre [http://localhost:3000](http://localhost:3000). Vite redirige `/api` al backend en el puerto 5000.
+Open [http://localhost:3000](http://localhost:3000). Vite proxies `/api` to the backend on port 5000.
 
-### Variables de entorno
+### Environment variables
 
-Todas son opcionales salvo `JWT_SECRET_KEY`.
+All of them are optional except `JWT_SECRET_KEY`.
 
-| Variable | Dónde | Para qué |
+| Variable | Where | Purpose |
 | --- | --- | --- |
-| `DATABASE_URL` | backend | Base de datos. Por defecto, SQLite local |
-| `JWT_SECRET_KEY` | backend | Firma de sesiones (obligatoria) |
-| `JWT_EXPIRES_HOURS` | backend | Duración de la sesión. Por defecto, 8 |
-| `CORS_ORIGINS` | backend | Orígenes permitidos, separados por comas |
-| `CRON_SECRET` | backend | Secreto del resumen diario por HTTP |
-| `MAIL_SERVER`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_USE_TLS`, `MAIL_USE_SSL`, `MAIL_SENDER` | backend | Envío del resumen diario |
-| `PAYPAL_DEMO_CLIENT_ID`, `PAYPAL_DEMO_CLIENT_SECRET` | backend | Modo demostración con PayPal Sandbox |
-| `CLOUDINARY_CLOUD_NAME` | backend | Restringe las imágenes y archivos a tu cuenta |
-| `VITE_API_URL` | frontend | Prefijo de la API. Por defecto, `/api` |
-| `VITE_CLOUDINARY_CLOUD_NAME`, `VITE_CLOUDINARY_UPLOAD_PRESET` | frontend | Subida de fotos y archivos |
+| `DATABASE_URL` | backend | Database. Defaults to a local SQLite file |
+| `JWT_SECRET_KEY` | backend | Session signing key (required) |
+| `JWT_EXPIRES_HOURS` | backend | Session length. Defaults to 8 |
+| `CORS_ORIGINS` | backend | Allowed origins, comma separated |
+| `CRON_SECRET` | backend | Secret for the daily digest over HTTP |
+| `MAIL_SERVER`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_USE_TLS`, `MAIL_USE_SSL`, `MAIL_SENDER` | backend | Sending the daily digest |
+| `PAYPAL_DEMO_CLIENT_ID`, `PAYPAL_DEMO_CLIENT_SECRET` | backend | Demo mode with PayPal Sandbox |
+| `CLOUDINARY_CLOUD_NAME` | backend | Restricts images and files to your account |
+| `VITE_API_URL` | frontend | API prefix. Defaults to `/api` |
+| `VITE_CLOUDINARY_CLOUD_NAME`, `VITE_CLOUDINARY_UPLOAD_PRESET` | frontend | Uploading pictures and files |
 
-Para el modo demostración crea una app en modo Sandbox en [developer.paypal.com](https://developer.paypal.com). Para la subida de archivos crea una cuenta en Cloudinary y un *upload preset* sin firma, preferiblemente limitado a imágenes y documentos.
+For demo mode, create an app in Sandbox mode at [developer.paypal.com](https://developer.paypal.com). For file uploads, create a Cloudinary account and an unsigned *upload preset*, ideally limited to images and documents.
 
-Los archivos `.env` no se versionan. Nunca subas credenciales reales a los archivos `.env.example`.
+`.env` files are not versioned. Never commit real credentials to the `.env.example` files.
 
-### Comandos útiles
+### Useful commands
 
 ```bash
-flask --app compis.bootstrap:create_app reset-demo    # recrea solo las cuentas de demostración
-flask --app compis.bootstrap:create_app send-digest   # envía el resumen diario ahora
+flask --app compis.bootstrap:create_app reset-demo    # recreates only the demo accounts
+flask --app compis.bootstrap:create_app send-digest   # sends the daily digest now
 ```
 
-## Tests y calidad
+## Tests and quality
 
 ```bash
 cd backend
@@ -171,70 +173,70 @@ ruff check . && ruff format --check . && mypy compis && pytest --cov=compis
 ```bash
 cd frontend
 npm run lint && npm run typecheck && npx prettier --check . && npm test
-npx playwright install chromium    # solo la primera vez
+npx playwright install chromium    # first time only
 npm run e2e
 ```
 
-- **Backend:** pruebas de dominio, de la API completa con permisos, de pagos con una pasarela simulada, de la capa de arquitectura y del punto de entrada de Vercel.
-- **Frontend:** pruebas unitarias y de integración con Testing Library y MSW, contraste de la paleta, accesibilidad con axe y el service worker.
-- **End-to-end:** Playwright arranca su propio backend y frontend con una base de datos temporal y recorre los flujos principales, la accesibilidad con contraste real y seis tamaños de pantalla.
+- **Backend:** domain tests, the full API with permissions, payments with a fake gateway, the architecture layers and the Vercel entry point.
+- **Frontend:** unit and integration tests with Testing Library and MSW, palette contrast, accessibility with axe and the service worker.
+- **End-to-end:** Playwright starts its own backend and frontend with a temporary database and walks through the main flows, accessibility with real contrast and six screen sizes.
 
-Las capturas de este README se regeneran con `npm run screenshots`.
+The screenshots in this README are regenerated with `npm run screenshots`.
 
-## CI/CD y despliegue
+## CI/CD and deployment
 
-- **CI** (`.github/workflows/ci.yml`): en cada pull request y en `main` ejecuta el lint, los tipos, los tests y el build, y después los tests end-to-end.
-- **Base de datos** (`.github/workflows/database.yml`): aplica las migraciones cuando cambian y recrea las cuentas de demostración cada semana. Necesita el secreto `DATABASE_URL` en el entorno `production`.
-- **Dependabot** agrupa las actualizaciones semanales de Python, npm y las acciones de GitHub.
-- **Vercel** sirve el frontend estático y el backend como función Python en el mismo dominio (`vercel.json` y `api/index.py`), con Postgres en Neon. Cada push a `main` se despliega automáticamente.
+- **CI** (`.github/workflows/ci.yml`): on every pull request and on `main` it runs linting, type checks, tests and the build, then the end-to-end tests.
+- **Database** (`.github/workflows/database.yml`): applies migrations when they change and recreates the demo accounts every week. It needs the `DATABASE_URL` secret in the `production` environment.
+- **Dependabot** groups the weekly updates for Python, npm and GitHub Actions.
+- **Vercel** serves the static frontend and the backend as a Python function on the same domain (`vercel.json` and `api/index.py`), with Postgres on Neon. Every push to `main` is deployed automatically.
 
-Para desplegar tu propia copia:
+To deploy your own copy:
 
-1. Importa el repositorio en Vercel con el preset **Other** y Node 22.
-2. Conecta una base de datos Neon desde la pestaña Storage, que añade `DATABASE_URL`.
-3. Añade `JWT_SECRET_KEY`, `CRON_SECRET`, `CLOUDINARY_CLOUD_NAME` y las variables `VITE_CLOUDINARY_*`. PayPal Sandbox y el correo son opcionales.
-4. En GitHub crea el entorno `production` con el secreto `DATABASE_URL` y ejecuta el workflow **Database** marcando `reset_demo`.
+1. Import the repository into Vercel with the **Other** preset and Node 22.
+2. Connect a Neon database from the Storage tab, which adds `DATABASE_URL`.
+3. Add `JWT_SECRET_KEY`, `CRON_SECRET`, `CLOUDINARY_CLOUD_NAME` and the `VITE_CLOUDINARY_*` variables. PayPal Sandbox and email are optional.
+4. In GitHub, create the `production` environment with the `DATABASE_URL` secret and run the **Database** workflow with `reset_demo` ticked.
 
 ## API
 
-Todas las rutas cuelgan de `/api` y exigen sesión salvo las de acceso, `health`, `config` y `cron`.
+All routes live under `/api` and require a session except sign-in, `health`, `config` and `cron`.
 
-| Área | Rutas |
+| Area | Routes |
 | --- | --- |
-| Acceso | `POST /signup`, `POST /login`, `POST /logout` |
-| Compis | `GET /roomie/{id}`, `GET /roomie/home/{id}`, `PUT /roomie/{id}`, `PUT /roomie/delete/{id}` |
-| Vivienda | `GET /home/{id}`, `POST /home`, `POST /home/{id}`, `DELETE /home/{id}/{roomie}`, `PUT /home/{id}` |
-| Tareas | `GET /task/home/{id}`, `GET /task/roomie/{id}`, `POST /task`, `PUT /task/{id}`, `PUT /task/date/{id}`, `DELETE /task/{id}` |
-| Compra | `GET /list/home/{id}`, `GET /item/list/{id}`, `POST /item`, `DELETE /item/{id}` |
-| Gastos y deudas | `GET /expense/roomie/{id}`, `POST /expense`, `GET /debts/roomie/{id}`, `POST /debts`, `POST /debts/{id}/report`, `POST /debts/{id}/confirm`, `POST /debts/{id}/reject` |
-| Pagos de demostración | `POST /payments/paypal/orders`, `POST /payments/paypal/capture` |
-| Archivos | `GET /file/home/{id}`, `POST /file`, `DELETE /file/{id}` |
-| Novedades y calendario | `GET /blog/home/{id}`, `GET /calendar/{id}` |
-| Sistema | `GET /health`, `GET /config`, `GET /cron/digest` |
+| Sign-in | `POST /signup`, `POST /login`, `POST /logout` |
+| Flatmates | `GET /roomie/{id}`, `GET /roomie/home/{id}`, `PUT /roomie/{id}`, `PUT /roomie/delete/{id}` |
+| Home | `GET /home/{id}`, `POST /home`, `POST /home/{id}`, `DELETE /home/{id}/{roomie}`, `PUT /home/{id}` |
+| Tasks | `GET /task/home/{id}`, `GET /task/roomie/{id}`, `POST /task`, `PUT /task/{id}`, `PUT /task/date/{id}`, `DELETE /task/{id}` |
+| Shopping | `GET /list/home/{id}`, `GET /item/list/{id}`, `POST /item`, `DELETE /item/{id}` |
+| Expenses and debts | `GET /expense/roomie/{id}`, `POST /expense`, `GET /debts/roomie/{id}`, `POST /debts`, `POST /debts/{id}/report`, `POST /debts/{id}/confirm`, `POST /debts/{id}/reject` |
+| Demo payments | `POST /payments/paypal/orders`, `POST /payments/paypal/capture` |
+| Files | `GET /file/home/{id}`, `POST /file`, `DELETE /file/{id}` |
+| Activity and calendar | `GET /blog/home/{id}`, `GET /calendar/{id}` |
+| System | `GET /health`, `GET /config`, `GET /cron/digest` |
 
-## Estructura del repositorio
+## Repository structure
 
 ```text
-api/                   Punto de entrada de la función de Vercel
+api/                   Entry point of the Vercel function
 backend/
   compis/
-    domain/            Entidades, errores y reglas
-    application/       Casos de uso y puertos
-    infrastructure/    Persistencia y adaptadores
-    interfaces/        API HTTP y comandos de consola
-  migrations/          Migraciones de Alembic
+    domain/            Entities, errors and rules
+    application/       Use cases and ports
+    infrastructure/    Persistence and adapters
+    interfaces/        HTTP API and console commands
+  migrations/          Alembic migrations
   tests/
 frontend/
   src/
-    app/               Rutas, estructura y navegación
-    features/          Una carpeta por funcionalidad
-    shared/            Cliente de API, componentes y utilidades
-  e2e/                 Pruebas end-to-end con Playwright
-  public/              Manifest, iconos y service worker
-docs/screenshots/      Imágenes de este README
-.github/               Workflows y Dependabot
+    app/               Routes, layout and navigation
+    features/          One folder per feature
+    shared/            API client, components and utilities
+  e2e/                 End-to-end tests with Playwright
+  public/              Manifest, icons and service worker
+docs/screenshots/      Images used in this README
+.github/               Workflows and Dependabot
 ```
 
-## Licencia
+## License
 
-Distribuido bajo la licencia MIT. Consulta el archivo [LICENSE](LICENSE).
+Released under the MIT licence. See the [LICENSE](LICENSE) file.
