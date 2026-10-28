@@ -38,14 +38,14 @@ def create_home():
 def add_roomie(home_id: int):
     body = parse_body(schemas.AddRoomieBody)
     services().homes.add_roomie(actor_id(), home_id, body.email)
-    return jsonify({"message": "Roomie agregado a la vivienda correctamente"})
+    return jsonify({"message": "Compi agregado a la vivienda correctamente"})
 
 
 @bp.delete("/home/<int:home_id>/<int:roomie_id>")
 @jwt_required()
 def remove_roomie(home_id: int, roomie_id: int):
     services().homes.remove_roomie(actor_id(), home_id, roomie_id)
-    return jsonify({"message": "Roomie eliminado de la vivienda correctamente"})
+    return jsonify({"message": "Compi eliminado de la vivienda correctamente"})
 
 
 @bp.put("/home/<int:home_id>")

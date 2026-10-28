@@ -39,15 +39,17 @@ class HomeService:
         self._load_home(home_id)
         roomie = self._uow.roomies.get_by_email(email.strip().lower())
         if roomie is None or not roomie.is_active:
-            raise NotFoundError("No se encontró el roomie con el correo electrónico proporcionado")
+            raise NotFoundError(
+                "No se encontró ningún compi con el correo electrónico proporcionado"
+            )
         if roomie.home_id == home_id:
-            raise ConflictError("Este roomie ya está en la vivienda")
+            raise ConflictError("Este compi ya está en la vivienda")
         if roomie.home_id is not None:
-            raise ConflictError("Este roomie ya tiene otra vivienda")
+            raise ConflictError("Este compi ya tiene otra vivienda")
         roomie.home_id = home_id
         self._uow.roomies.save(roomie)
         self._activity.record(
-            home_id, f"Nuevo roomie agregado: {roomie.first_name}", actor.first_name
+            home_id, f"Nuevo compi agregado: {roomie.first_name}", actor.first_name
         )
         self._uow.commit()
         return roomie
@@ -57,16 +59,16 @@ class HomeService:
         require_admin(actor, home_id)
         roomie = load_roomie(self._uow, roomie_id)
         if roomie.home_id != home_id:
-            raise ValidationError("El roomie no pertenece a esta vivienda")
+            raise ValidationError("El compi no pertenece a esta vivienda")
         if roomie.id == actor.id:
             raise ValidationError("No puedes eliminarte a ti mismo de la vivienda")
         assert roomie.id is not None
         if self._uow.debts.has_pending(roomie.id):
-            raise ConflictError("El roomie tiene deudas pendientes y no puede ser eliminado")
+            raise ConflictError("El compi tiene deudas pendientes y no puede ser eliminado")
         roomie.home_id = None
         roomie.is_admin = False
         self._uow.roomies.save(roomie)
-        self._activity.record(home_id, f"Roomie eliminado: {roomie.first_name}", actor.first_name)
+        self._activity.record(home_id, f"Compi eliminado: {roomie.first_name}", actor.first_name)
         self._uow.commit()
 
     def deactivate(self, actor_id: int, home_id: int) -> Home:

@@ -32,7 +32,7 @@ class AuthService:
         if not first_name.strip():
             raise ValidationError("El nombre es obligatorio")
         if self._uow.roomies.get_by_email(email) is not None:
-            raise ConflictError("Este roomie ya existe")
+            raise ConflictError("Ya existe una cuenta con este correo")
         roomie = self._uow.roomies.add(
             Roomie(
                 email=email,

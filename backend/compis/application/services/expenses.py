@@ -88,7 +88,7 @@ class DebtService:
         for debtor_id in unique_ids:
             debtor = load_roomie(self._uow, debtor_id)
             if debtor.home_id != expense.home_id:
-                raise ValidationError("Todos los roomies deben pertenecer a la vivienda")
+                raise ValidationError("Todos los compis deben pertenecer a la vivienda")
             debtors.append(debtor)
         share = split_equally(total_cents, len(debtors))
         if share < 1:

@@ -31,7 +31,7 @@ const PRIVATE_PAGES: Array<[string, string]> = [
   ["/calendar", "Pago de Marcos: 15,30€"],
   ["/files", "Contrato.pdf"],
   ["/activity", "Marcos debe 15,30€ a Lucía"],
-  ["/roomies", "Marcos"],
+  ["/compis", "Marcos"],
   ["/profile", "Tus datos"],
   ["/does-not-exist", "Esta dirección no existe"],
 ];

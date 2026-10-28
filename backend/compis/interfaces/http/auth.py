@@ -11,7 +11,7 @@ bp = Blueprint("auth", __name__)
 def signup():
     body = parse_body(schemas.SignupBody)
     services().auth.signup(body.email, body.password, body.first_name, body.last_name, body.avatar)
-    return jsonify({"message": "Nuevo roomie creado correctamente"}), 201
+    return jsonify({"message": "Cuenta creada correctamente"}), 201
 
 
 @bp.post("/login")
@@ -31,4 +31,4 @@ def login():
 
 @bp.post("/logout")
 def logout():
-    return jsonify({"message": "El roomie ha salido correctamente"})
+    return jsonify({"message": "Sesión cerrada correctamente"})

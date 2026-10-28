@@ -32,7 +32,7 @@ export function AppRoutes() {
             <Route path="/calendar" element={<CalendarPage />} />
             <Route path="/files" element={<FilesPage />} />
             <Route path="/activity" element={<ActivityPage />} />
-            <Route path="/roomies" element={<RoomiesPage />} />
+            <Route path="/compis" element={<RoomiesPage />} />
           </Route>
           <Route path="*" element={<NotFoundPage />} />
         </Route>

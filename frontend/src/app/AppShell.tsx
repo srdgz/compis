@@ -44,7 +44,7 @@ const SECONDARY: NavItem[] = [
   { to: "/calendar", label: "Calendario", icon: CalendarDays },
   { to: "/files", label: "Archivos", icon: FolderOpen },
   { to: "/activity", label: "Novedades", icon: Newspaper },
-  { to: "/roomies", label: "Roomies", icon: Users },
+  { to: "/compis", label: "Compis", icon: Users },
   { to: "/profile", label: "Mi perfil", icon: User },
 ];
 
