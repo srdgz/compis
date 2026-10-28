@@ -20,7 +20,7 @@ def test_serverless_entry_exposes_a_wsgi_app(monkeypatch):
     module = load_entry(monkeypatch)
     client = module.app.test_client()
     assert client.get("/api/health").get_json() == {"status": "ok"}
-    assert module.app.config["SQLALCHEMY_DATABASE_URI"].startswith("postgresql://")
+    assert module.app.config["SQLALCHEMY_DATABASE_URI"].startswith("postgresql+psycopg2://")
     assert module.app.config["SQLALCHEMY_ENGINE_OPTIONS"]["pool_pre_ping"] is True
 
 
