@@ -14,11 +14,13 @@ const VARIANTS: Record<Variant, string> = {
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: Variant;
   loading?: boolean;
+  iconOnly?: boolean;
 }
 
 export function Button({
   variant = "primary",
   loading = false,
+  iconOnly = false,
   disabled,
   className,
   children,
@@ -31,7 +33,8 @@ export function Button({
       disabled={disabled || loading}
       aria-busy={loading || undefined}
       className={cx(
-        "inline-flex min-h-11 items-center justify-center gap-2 rounded-full border-2 px-5 py-2 font-semibold transition-opacity",
+        "inline-flex min-h-11 items-center justify-center gap-2 rounded-full border-2 py-2 font-semibold transition-opacity",
+        iconOnly ? "w-11 shrink-0 px-0" : "px-5",
         "disabled:cursor-not-allowed disabled:opacity-60",
         VARIANTS[variant],
         className,

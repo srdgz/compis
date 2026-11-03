@@ -15,6 +15,7 @@ import type { LucideIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 
+import { AssistantLauncher } from "@/features/assistant/AssistantLauncher";
 import { useAuth } from "@/features/auth/AuthProvider";
 import { fullName } from "@/features/roomies/api";
 import { useCurrentRoomie } from "@/features/roomies/hooks";
@@ -248,6 +249,8 @@ export function AppShell() {
       >
         <Outlet />
       </main>
+
+      <AssistantLauncher />
     </div>
   );
 }
