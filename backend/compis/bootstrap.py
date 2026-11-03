@@ -15,6 +15,7 @@ from compis.infrastructure.adapters import (
     SystemClock,
 )
 from compis.infrastructure.db.extensions import db, migrate
+from compis.infrastructure.gemini import DEFAULT_MODEL, GeminiLanguageModel
 from compis.infrastructure.paypal import PayPalSandboxGateway
 from compis.infrastructure.unit_of_work import SqlUnitOfWork
 from compis.interfaces.cli import register_cli
@@ -60,6 +61,10 @@ def create_app(
     if gateway is None and settings.paypal_demo_client_id and settings.paypal_demo_client_secret:
         gateway = PayPalSandboxGateway(
             settings.paypal_demo_client_id, settings.paypal_demo_client_secret
+        )
+    if model is None and settings.assistant_provider == "gemini" and settings.gemini_api_key:
+        model = GeminiLanguageModel(
+            settings.gemini_api_key, settings.assistant_model or DEFAULT_MODEL
         )
     app.extensions["compis"] = build_services(
         SqlUnitOfWork(db.session),

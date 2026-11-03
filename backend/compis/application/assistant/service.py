@@ -111,7 +111,14 @@ class AssistantService:
                 return text
             if len(reply.tool_calls) > MAX_TOOL_CALLS_PER_TURN:
                 raise ModelError("too many tool calls")
-            conversation.append(ChatMessage("assistant", reply.text, reply.tool_calls))
+            conversation.append(
+                ChatMessage(
+                    "assistant",
+                    reply.text,
+                    reply.tool_calls,
+                    provider_data=reply.provider_data,
+                )
+            )
             for call in reply.tool_calls:
                 result = self._tools.run(actor_id, call.name, call.arguments)
                 conversation.append(

@@ -14,6 +14,7 @@ class ChatMessage:
     content: str = ""
     tool_calls: tuple[ToolCall, ...] = ()
     tool_name: str = ""
+    provider_data: Any = None
 
 
 @dataclass(frozen=True)
@@ -27,6 +28,7 @@ class ToolSpec:
 class ModelReply:
     text: str = ""
     tool_calls: tuple[ToolCall, ...] = ()
+    provider_data: Any = None
 
 
 @dataclass(frozen=True)
