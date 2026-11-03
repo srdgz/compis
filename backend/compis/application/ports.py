@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from datetime import date, datetime
 from typing import Protocol
 
+from compis.application.assistant.types import ChatMessage, ModelReply, ToolSpec
 from compis.domain.entities import (
     Activity,
     Debt,
@@ -77,6 +78,11 @@ class ActivityRepository(Protocol):
     def list_since(self, since: datetime) -> list[Activity]: ...
 
 
+class AssistantUsageRepository(Protocol):
+    def count_for_day(self, day: date, roomie_id: int | None = None) -> int: ...
+    def record(self, day: date, roomie_id: int) -> None: ...
+
+
 class UnitOfWork(Protocol):
     @property
     def roomies(self) -> RoomieRepository: ...
@@ -101,6 +107,9 @@ class UnitOfWork(Protocol):
 
     @property
     def activities(self) -> ActivityRepository: ...
+
+    @property
+    def assistant_usage(self) -> AssistantUsageRepository: ...
     def commit(self) -> None: ...
     def rollback(self) -> None: ...
 
@@ -114,6 +123,12 @@ class Clock(Protocol):
     def now(self) -> datetime: ...
 
     def today(self) -> date: ...
+
+
+class LanguageModel(Protocol):
+    def complete(
+        self, system: str, messages: list[ChatMessage], tools: list[ToolSpec]
+    ) -> ModelReply: ...
 
 
 class Mailer(Protocol):

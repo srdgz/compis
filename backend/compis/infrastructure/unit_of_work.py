@@ -1,6 +1,7 @@
 from compis.infrastructure.db.repositories import (
     SessionLike,
     SqlActivityRepository,
+    SqlAssistantUsageRepository,
     SqlDebtRepository,
     SqlExpenseRepository,
     SqlFileRepository,
@@ -22,6 +23,7 @@ class SqlUnitOfWork:
         self.debts = SqlDebtRepository(session)
         self.files = SqlFileRepository(session)
         self.activities = SqlActivityRepository(session)
+        self.assistant_usage = SqlAssistantUsageRepository(session)
 
     def commit(self) -> None:
         self._session.commit()

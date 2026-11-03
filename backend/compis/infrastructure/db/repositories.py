@@ -1,8 +1,8 @@
 from dataclasses import fields
-from datetime import datetime
+from datetime import date, datetime
 from typing import Any
 
-from sqlalchemy import delete, or_, select
+from sqlalchemy import delete, func, or_, select
 from sqlalchemy.orm import Session, scoped_session
 
 from compis.domain.entities import (
@@ -19,6 +19,7 @@ from compis.domain.entities import (
 )
 from compis.infrastructure.db.models import (
     ActivityRow,
+    AssistantUsageRow,
     DebtRow,
     ExpenseRow,
     FileRow,
@@ -183,6 +184,31 @@ class SqlDebtRepository(SqlRepository):
 
     def has_pending(self, roomie_id: int) -> bool:
         return bool(self.list_for_roomie(roomie_id, pending_only=True))
+
+
+class SqlAssistantUsageRepository:
+    def __init__(self, session: SessionLike) -> None:
+        self._session = session
+
+    def count_for_day(self, day: date, roomie_id: int | None = None) -> int:
+        statement = select(func.coalesce(func.sum(AssistantUsageRow.count), 0)).where(
+            AssistantUsageRow.day == day
+        )
+        if roomie_id is not None:
+            statement = statement.where(AssistantUsageRow.roomie_id == roomie_id)
+        return int(self._session.scalar(statement) or 0)
+
+    def record(self, day: date, roomie_id: int) -> None:
+        row = self._session.scalar(
+            select(AssistantUsageRow).where(
+                AssistantUsageRow.day == day, AssistantUsageRow.roomie_id == roomie_id
+            )
+        )
+        if row is None:
+            self._session.add(AssistantUsageRow(roomie_id=roomie_id, day=day, count=1))
+        else:
+            row.count += 1
+        self._session.flush()
 
 
 class SqlFileRepository(SqlRepository):

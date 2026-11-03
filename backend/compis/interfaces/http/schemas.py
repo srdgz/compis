@@ -1,6 +1,18 @@
 from typing import Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+
+from compis.application.assistant.service import MAX_HISTORY, MAX_MESSAGE_LENGTH
+
+
+class ChatMessageBody(BaseModel):
+    role: Literal["user", "assistant"]
+    content: str = Field(min_length=1, max_length=MAX_MESSAGE_LENGTH)
+
+
+class AssistantBody(BaseModel):
+    messages: list[ChatMessageBody] = Field(min_length=1, max_length=MAX_HISTORY)
+    locale: str | None = None
 
 
 class SignupBody(BaseModel):

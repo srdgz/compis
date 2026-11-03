@@ -8,7 +8,10 @@ from compis.domain.errors import DomainError
 def register(app: Flask) -> None:
     @app.errorhandler(DomainError)
     def handle_domain_error(error: DomainError):
-        return jsonify({"error": error.message}), error.status_code
+        body = {"error": error.message}
+        if error.code:
+            body["code"] = error.code
+        return jsonify(body), error.status_code
 
     @app.errorhandler(HTTPException)
     def handle_http_error(error: HTTPException):

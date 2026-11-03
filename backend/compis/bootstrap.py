@@ -3,8 +3,9 @@ from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from flask_mail import Mail
 
+from compis.application.assistant.service import Limits
 from compis.application.container import build_services
-from compis.application.ports import Clock, Mailer, PaymentGateway
+from compis.application.ports import Clock, LanguageModel, Mailer, PaymentGateway
 from compis.config import Settings
 from compis.domain.avatar import media_prefix
 from compis.infrastructure.adapters import (
@@ -14,6 +15,7 @@ from compis.infrastructure.adapters import (
     SystemClock,
 )
 from compis.infrastructure.db.extensions import db, migrate
+from compis.infrastructure.gemini import DEFAULT_MODEL, GeminiLanguageModel
 from compis.infrastructure.paypal import PayPalSandboxGateway
 from compis.infrastructure.unit_of_work import SqlUnitOfWork
 from compis.interfaces.cli import register_cli
@@ -25,6 +27,7 @@ def create_app(
     clock: Clock | None = None,
     mailer: Mailer | None = None,
     gateway: PaymentGateway | None = None,
+    model: LanguageModel | None = None,
 ) -> Flask:
     settings = settings or Settings.from_env()
     app = Flask(__name__)
@@ -59,6 +62,10 @@ def create_app(
         gateway = PayPalSandboxGateway(
             settings.paypal_demo_client_id, settings.paypal_demo_client_secret
         )
+    if model is None and settings.assistant_provider == "gemini" and settings.gemini_api_key:
+        model = GeminiLanguageModel(
+            settings.gemini_api_key, settings.assistant_model or DEFAULT_MODEL
+        )
     app.extensions["compis"] = build_services(
         SqlUnitOfWork(db.session),
         clock or SystemClock(),
@@ -68,6 +75,8 @@ def create_app(
         gateway,
         settings.paypal_demo_client_id,
         media_prefix(settings.cloudinary_cloud_name),
+        model,
+        Limits(settings.assistant_daily_limit, settings.assistant_global_daily_limit),
     )
     register_http(app)
     register_cli(app)

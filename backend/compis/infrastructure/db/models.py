@@ -1,6 +1,6 @@
 from datetime import date, datetime
 
-from sqlalchemy import Boolean, Date, DateTime, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Date, DateTime, ForeignKey, Integer, String, UniqueConstraint
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
@@ -80,6 +80,16 @@ class DebtRow(Base):
     roomie_debtor_id: Mapped[int] = mapped_column(ForeignKey("roomies.id"), index=True)
     roomie_paying_id: Mapped[int] = mapped_column(ForeignKey("roomies.id"), index=True)
     expense_id: Mapped[int] = mapped_column(ForeignKey("expenses.id"))
+
+
+class AssistantUsageRow(Base):
+    __tablename__ = "assistant_usage"
+    __table_args__ = (UniqueConstraint("roomie_id", "day"),)
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    roomie_id: Mapped[int] = mapped_column(ForeignKey("roomies.id"), index=True)
+    day: Mapped[date] = mapped_column(Date, index=True)
+    count: Mapped[int] = mapped_column(Integer, default=0)
 
 
 class FileRow(Base):

@@ -143,3 +143,54 @@
 dialog::backdrop {
   background: rgb(10 26 26 / 0.6);
 }
+
+.assistant-drawer {
+  --drawer-strip: max(2rem, env(safe-area-inset-top));
+  margin: 0 0 0 auto;
+  height: 100dvh;
+  max-height: none;
+  width: min(24rem, 100%);
+  max-width: 100%;
+  border-radius: 1.75rem 0 0 1.75rem;
+}
+
+.assistant-drawer[open] {
+  animation: drawer-in-right 0.25s ease-out;
+}
+
+@media (max-width: 767px) {
+  .assistant-drawer {
+    position: fixed;
+    inset: calc(var(--vv-top, 0px) + var(--drawer-strip)) 0 auto 0;
+    margin: 0;
+    height: calc(var(--vv-height, 100dvh) - var(--drawer-strip));
+    width: 100%;
+    border-radius: 1.75rem 1.75rem 0 0;
+  }
+
+  .assistant-drawer[open] {
+    animation-name: drawer-in-up;
+  }
+}
+
+.assistant-thinking {
+  animation: thinking 1.2s ease-in-out infinite;
+}
+
+@keyframes drawer-in-right {
+  from {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes drawer-in-up {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes thinking {
+  50% {
+    opacity: 0.45;
+  }
+}

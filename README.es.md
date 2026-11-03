@@ -45,6 +45,7 @@ Los datos de la demo se recrean cada semana.
 - **Pagos entre compañeros.** El deudor paga con PayPal.Me o en efectivo y avisa; el acreedor confirma o rechaza el pago. Más abajo se explica por qué.
 - **Calendario y novedades.** Tareas y vencimientos por mes, y un registro de lo que va pasando en la casa.
 - **Archivos.** Contratos, facturas y tickets, subidos a Cloudinary.
+- **Compi, el asistente.** Un botón flotante abre un chat en un panel lateral donde preguntas cuánto debes, quién te debe, qué tareas tienes y qué hay en la lista de la compra. Solo lee tus datos.
 - **Resumen diario por correo** de la actividad de la vivienda.
 - **Aplicación instalable (PWA)** con un shell que funciona sin conexión.
 - **Tema automático, claro u oscuro** y diseño adaptado a cualquier pantalla.
@@ -85,6 +86,17 @@ PayPal cobra siempre a una cuenta de comercio, así que no permite pagos directo
 
 - **Pago real: PayPal.Me, efectivo y confirmación.** Cada persona guarda su usuario de [PayPal.Me](https://www.paypal.me). Al pagar, la aplicación abre `paypal.me/usuario/importeEUR` con la cantidad ya rellenada. Después el deudor avisa de que ha pagado y el acreedor lo confirma o lo rechaza. La deuda pasa por tres estados: pendiente, comunicada y saldada. Nadie puede saldar su propia deuda sin que el acreedor lo confirme.
 - **Modo demostración: PayPal Sandbox.** Si el servidor tiene credenciales de Sandbox, el diálogo de pago muestra los botones de PayPal. El pedido se crea y se captura en el servidor, que solo salda la deuda si el estado, el importe, la moneda y la referencia coinciden. El código solo habla con el entorno de pruebas, y el dinero es ficticio.
+
+## Compi, el asistente
+
+Compi responde a lo que tienes pendiente: deudas, tareas y lista de la compra. Es de solo lectura por diseño: no tiene forma de crear, cambiar ni pagar nada.
+
+- **Los datos salen del backend.** El modelo de lenguaje no calcula ni recuerda nada. Elige entre cuatro herramientas de lectura (`get_debts`, `get_tasks`, `get_shopping_list`, `get_today`) que llaman a los mismos servicios que el resto de la aplicación, con el usuario tomado de la sesión. Los totales y las tareas vencidas se calculan en código. Un test falla si algún día se añade una herramienta que escriba.
+- **Funciona sin modelo.** Sin proveedor configurado, o cuando el proveedor falla o se agota su cuota, Compi responde con un resumen automático construido con las mismas herramientas. Es el modo por defecto y el que usan los tests y la demo.
+- **Modelo opcional: Gemini.** Con `ASSISTANT_PROVIDER=gemini` y `GEMINI_API_KEY`, un modelo de Gemini redacta las respuestas. El proveedor está detrás de un puerto, así que se puede cambiar sustituyendo un solo adaptador.
+- **Idioma.** El cliente envía el idioma de la interfaz (`es` o `en`) en cada petición y Compi responde en el idioma en que escribe el usuario. Los mensajes fijos salen de un catálogo con las mismas claves en ambos idiomas.
+- **Límites.** Por defecto, 20 preguntas por persona y 200 en total al día, guardadas en la base de datos para que funcionen en serverless. Superado el límite global, responde con el resumen automático.
+- **Privacidad.** Las conversaciones no se guardan. Al modelo solo llegan nombres de pila, importes, fechas y el texto de tareas y elementos, nunca correos, apellidos ni identificadores. El texto escrito por los usuarios se trata como dato, no como instrucciones. **Las capas gratuitas de los proveedores pueden usar el contenido enviado para mejorar sus productos, y sus condiciones pueden restringir el uso en algunas regiones.** Lee las condiciones del proveedor antes de activar un modelo con usuarios reales; el resumen automático no envía nada a ningún sitio.
 
 ## Accesibilidad y diseño responsive
 
@@ -149,6 +161,8 @@ Todas son opcionales salvo `JWT_SECRET_KEY`.
 | `MAIL_SERVER`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_USE_TLS`, `MAIL_USE_SSL`, `MAIL_SENDER` | backend | Envío del resumen diario |
 | `PAYPAL_DEMO_CLIENT_ID`, `PAYPAL_DEMO_CLIENT_SECRET` | backend | Modo demostración con PayPal Sandbox |
 | `CLOUDINARY_CLOUD_NAME` | backend | Restringe las imágenes y archivos a tu cuenta |
+| `ASSISTANT_PROVIDER`, `GEMINI_API_KEY`, `ASSISTANT_MODEL` | backend | Modelo de lenguaje opcional para el asistente (`none` por defecto) |
+| `ASSISTANT_DAILY_LIMIT`, `ASSISTANT_GLOBAL_DAILY_LIMIT` | backend | Preguntas por persona y en total al día (20 y 200) |
 | `VITE_API_URL` | frontend | Prefijo de la API. Por defecto, `/api` |
 | `VITE_CLOUDINARY_CLOUD_NAME`, `VITE_CLOUDINARY_UPLOAD_PRESET` | frontend | Subida de fotos y archivos |
 
@@ -212,6 +226,7 @@ Todas las rutas cuelgan de `/api` y exigen sesión salvo las de acceso, `health`
 | Pagos de demostración | `POST /payments/paypal/orders`, `POST /payments/paypal/capture` |
 | Archivos | `GET /file/home/{id}`, `POST /file`, `DELETE /file/{id}` |
 | Novedades y calendario | `GET /blog/home/{id}`, `GET /calendar/{id}` |
+| Asistente | `POST /assistant/messages` |
 | Sistema | `GET /health`, `GET /config`, `GET /cron/digest` |
 
 ## Estructura del repositorio
