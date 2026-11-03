@@ -1,4 +1,4 @@
-import { RotateCcw, Send, Sparkles, X } from "lucide-react";
+import { Bot, RotateCcw, Send, X } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
 import type { FormEvent, KeyboardEvent } from "react";
 
@@ -28,7 +28,7 @@ function Message({ entry }: { entry: ChatEntry }) {
           mine ? "rounded-br-md bg-brand text-on-brand" : "rounded-bl-md bg-mint text-ink",
         )}
       >
-        <span className="sr-only">{mine ? "Tú: " : "Asistente: "}</span>
+        <span className="sr-only">{mine ? "Tú: " : "Compi: "}</span>
         {entry.content}
       </p>
       {entry.source === "fallback" && <p className="px-2 text-xs text-muted">Resumen automático</p>}
@@ -124,8 +124,8 @@ export function AssistantLauncher() {
         onClick={() => setOpen(true)}
         className="fixed bottom-[calc(5.75rem+env(safe-area-inset-bottom))] right-[max(1rem,env(safe-area-inset-right))] z-30 inline-flex h-14 min-w-14 items-center justify-center gap-2 rounded-full border-2 border-brand bg-brand px-4 font-semibold text-on-brand shadow-pop hover:opacity-90 lg:bottom-6 lg:right-6"
       >
-        <Sparkles aria-hidden="true" size={24} />
-        <span className="sr-only lg:not-sr-only">Asistente</span>
+        <Bot aria-hidden="true" size={26} />
+        <span className="sr-only lg:not-sr-only">Compi</span>
       </button>
 
       <dialog
@@ -136,7 +136,7 @@ export function AssistantLauncher() {
       >
         <div className="flex items-center justify-between gap-2 border-b border-line px-5 py-3">
           <h2 id={titleId} ref={titleRef} tabIndex={-1} className="text-xl outline-none">
-            Asistente
+            Compi
           </h2>
           <div className="flex items-center gap-1">
             {!empty && (
@@ -153,7 +153,7 @@ export function AssistantLauncher() {
             <Button
               variant="ghost"
               iconOnly
-              aria-label="Cerrar el asistente"
+              aria-label="Cerrar Compi"
               onClick={() => setOpen(false)}
             >
               <X aria-hidden="true" size={22} />
@@ -170,7 +170,10 @@ export function AssistantLauncher() {
         >
           {empty && (
             <div className="flex flex-col gap-4">
-              <p>Pregúntame qué tienes pendiente en casa. Solo leo tus datos, no cambio nada.</p>
+              <p>
+                Soy Compi. Pregúntame qué tienes pendiente en casa. Solo leo tus datos, no cambio
+                nada.
+              </p>
               <ul className="flex flex-wrap gap-2">
                 {SUGGESTIONS.map((suggestion) => (
                   <li key={suggestion}>

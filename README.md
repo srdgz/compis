@@ -45,7 +45,7 @@ Demo data is recreated every week. The interface is currently in Spanish.
 - **Payments between flatmates.** The debtor pays with PayPal.Me or in cash and reports it; the creditor confirms or rejects the payment. See below for why it works this way.
 - **Calendar and activity.** Tasks and due dates by month, plus a log of what happens in the home.
 - **Files.** Contracts, bills and receipts, uploaded to Cloudinary.
-- **Assistant.** A floating button opens a chat drawer where you ask what you owe, who owes you, which tasks are due and what is on the shopping list. It only reads your data.
+- **Compi, the assistant.** A floating button opens a chat drawer where you ask what you owe, who owes you, which tasks are due and what is on the shopping list. It only reads your data.
 - **Daily email digest** of the home's activity.
 - **Installable app (PWA)** with a shell that works offline.
 - **Automatic, light or dark theme** and a layout that adapts to any screen.
@@ -87,9 +87,9 @@ PayPal always charges a merchant account, so it does not allow direct payments b
 - **Real payment: PayPal.Me, cash and confirmation.** Each person saves their [PayPal.Me](https://www.paypal.me) username. When paying, the app opens `paypal.me/username/amountEUR` with the amount already filled in. The debtor then reports the payment and the creditor confirms or rejects it. A debt goes through three states: pending, reported and settled. Nobody can settle their own debt without the creditor's confirmation.
 - **Demo mode: PayPal Sandbox.** If the server has Sandbox credentials, the payment dialog shows the PayPal buttons. The order is created and captured on the server, which only settles the debt when status, amount, currency and reference all match. The code only talks to the test environment, and the money is fake.
 
-## Assistant
+## Compi, the assistant
 
-The assistant answers questions about what you have pending: debts, tasks and the shopping list. It is read-only by design: it has no way to create, change or pay anything.
+Compi answers questions about what you have pending: debts, tasks and the shopping list. It is read-only by design: it has no way to create, change or pay anything.
 
 - **Facts come from the backend.** The language model does not compute or remember anything. It chooses among four read-only tools (`get_debts`, `get_tasks`, `get_shopping_list`, `get_today`) that call the same services as the rest of the app, with the signed-in user taken from the session. Totals and overdue flags are calculated in code. A test fails if a tool that writes is ever added.
 - **It works without a model.** With no provider configured, or when the provider fails or its quota runs out, the assistant answers with an automatic summary built from the same tools. That is the default, and it is what the tests and the demo use.

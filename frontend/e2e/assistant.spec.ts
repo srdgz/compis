@@ -16,8 +16,8 @@ test.describe("assistant", () => {
     await addDebtOwedByMate(request, flat);
     await signIn(page, flat.mate);
 
-    await page.getByRole("button", { name: "Asistente" }).click();
-    const drawer = page.getByRole("dialog", { name: "Asistente" });
+    await page.getByRole("button", { name: "Compi", exact: true }).click();
+    const drawer = page.getByRole("dialog", { name: "Compi", exact: true });
     await expect(drawer).toBeVisible();
     await drawer.getByRole("button", { name: "¿Cuánto debo?" }).click();
 
@@ -37,8 +37,8 @@ test.describe("assistant", () => {
     await addDebtOwedByMate(request, flat);
     await signIn(page, flat.owner);
 
-    await page.getByRole("button", { name: "Asistente" }).click();
-    const drawer = page.getByRole("dialog", { name: "Asistente" });
+    await page.getByRole("button", { name: "Compi", exact: true }).click();
+    const drawer = page.getByRole("dialog", { name: "Compi", exact: true });
     await drawer.getByRole("button", { name: "¿Quién me debe?" }).click();
     await expect(drawer.getByRole("log")).toContainText("Te deben 15,00 € en total");
     await expect(drawer.getByRole("log")).toContainText("Marcos");
@@ -47,11 +47,11 @@ test.describe("assistant", () => {
   test("closes with Escape and gives focus back to the button", async ({ page, request }) => {
     const flat = await createFlat(request);
     await signIn(page, flat.owner);
-    const trigger = page.getByRole("button", { name: "Asistente" });
+    const trigger = page.getByRole("button", { name: "Compi", exact: true });
     await trigger.click();
-    await expect(page.getByRole("dialog", { name: "Asistente" })).toBeVisible();
+    await expect(page.getByRole("dialog", { name: "Compi", exact: true })).toBeVisible();
     await page.keyboard.press("Escape");
-    await expect(page.getByRole("dialog", { name: "Asistente" })).toBeHidden();
+    await expect(page.getByRole("dialog", { name: "Compi", exact: true })).toBeHidden();
     await expect(trigger).toBeFocused();
   });
 
@@ -64,8 +64,8 @@ test.describe("assistant", () => {
       const flat = await createFlat(request);
       await addDebtOwedByMate(request, flat);
       await signIn(page, flat.mate);
-      await page.getByRole("button", { name: "Asistente" }).click();
-      const drawer = page.getByRole("dialog", { name: "Asistente" });
+      await page.getByRole("button", { name: "Compi", exact: true }).click();
+      const drawer = page.getByRole("dialog", { name: "Compi", exact: true });
       await drawer.getByRole("button", { name: "¿Cuánto debo?" }).click();
       await expect(drawer.getByRole("log")).toContainText("Debes");
       await expectNoAxeViolations(page);
@@ -82,7 +82,7 @@ for (const size of SIZES) {
       await addDebtOwedByMate(request, flat);
       await signIn(page, flat.mate);
 
-      const button = await page.getByRole("button", { name: "Asistente" }).boundingBox();
+      const button = await page.getByRole("button", { name: "Compi", exact: true }).boundingBox();
       expect(button).not.toBeNull();
       expect(button!.x + button!.width).toBeLessThanOrEqual(size.width);
       expect(button!.y + button!.height).toBeLessThanOrEqual(size.height);
@@ -91,8 +91,8 @@ for (const size of SIZES) {
         expect(button!.y + button!.height).toBeLessThanOrEqual(nav!.y);
       }
 
-      await page.getByRole("button", { name: "Asistente" }).click();
-      const drawer = page.getByRole("dialog", { name: "Asistente" });
+      await page.getByRole("button", { name: "Compi", exact: true }).click();
+      const drawer = page.getByRole("dialog", { name: "Compi", exact: true });
       await expect(drawer).toBeVisible();
       await page.waitForTimeout(400);
       const box = await drawer.boundingBox();
@@ -113,7 +113,7 @@ for (const size of SIZES) {
       await input.press("Enter");
       await expect(drawer.getByRole("log")).toContainText("No tienes tareas pendientes.");
       await expect(input).toBeInViewport();
-      await expect(drawer.getByRole("button", { name: "Cerrar el asistente" })).toBeInViewport();
+      await expect(drawer.getByRole("button", { name: "Cerrar Compi" })).toBeInViewport();
 
       const overflow = await page.evaluate(
         () => document.documentElement.scrollWidth > document.documentElement.clientWidth,

@@ -34,8 +34,8 @@ async function openAssistant() {
   mockDemoApi();
   const user = userEvent.setup();
   renderApp("/activity", true);
-  await user.click(await screen.findByRole("button", { name: "Asistente" }));
-  const dialog = await screen.findByRole("dialog", { name: "Asistente" });
+  await user.click(await screen.findByRole("button", { name: "Compi" }));
+  const dialog = await screen.findByRole("dialog", { name: "Compi" });
   return { user, dialog };
 }
 
@@ -95,9 +95,9 @@ describe("assistant drawer", () => {
     await user.click(within(dialog).getByRole("button", { name: "¿Qué tareas tengo?" }));
     await within(dialog).findByText(/Respuesta guardada\./);
 
-    await user.click(within(dialog).getByRole("button", { name: "Cerrar el asistente" }));
+    await user.click(within(dialog).getByRole("button", { name: "Cerrar Compi" }));
     await waitFor(() => expect(dialog).not.toHaveAttribute("open"));
-    await user.click(screen.getByRole("button", { name: "Asistente" }));
+    await user.click(screen.getByRole("button", { name: "Compi" }));
     expect(await screen.findByText(/Respuesta guardada\./)).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "Nueva conversación" }));

@@ -30,7 +30,8 @@ MAX_HISTORY = 10
 MAX_MESSAGE_LENGTH = 500
 TIME_BUDGET_SECONDS = 9.0
 
-SYSTEM_PROMPT = """You are the assistant of Compis, an app for people who share a home.
+SYSTEM_PROMPT = """You are Compi, the friendly assistant of Compis, \
+an app for people who share a home.
 You help the signed-in user understand what they have pending: debts, tasks and the shopping list.
 
 Rules:

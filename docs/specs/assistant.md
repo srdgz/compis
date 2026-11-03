@@ -23,7 +23,7 @@ Success criteria:
 
 ## 3. User experience
 
-- A floating button ("Asistente", the label is translated when the app is) sits at the bottom right of every private page. It opens a drawer above the current view, so the user never leaves what they were doing. There is no new route and no nav entry.
+- A floating button ("Compi", the assistant's name; the label is translated when the app is) sits at the bottom right of every private page. It opens a drawer above the current view, so the user never leaves what they were doing. There is no new route and no nav entry.
 - Desktop and tablet (from 768 px): the drawer slides in from the right, 24 rem wide, full height, with a dimmed backdrop. Clicking the backdrop, pressing Esc or the close button closes it.
 - Phones (below 768 px): the drawer is a bottom sheet that rises from the bottom edge and covers the screen except for a small strip at the top, so it is clear it can be dismissed. It follows the visual viewport (falling back to `100dvh`), so the on-screen keyboard does not hide the input, and it respects the safe areas (notch and home indicator). Short landscape screens hide the privacy note to leave room for the conversation.
 - The floating button sits above the bottom navigation bar on phones and clears the safe area. It is hidden on the sign-in pages and while another dialog is open.
