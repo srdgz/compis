@@ -2,6 +2,7 @@ from flask import Flask
 
 from compis.interfaces.http import (
     activity,
+    assistant,
     auth,
     calendar,
     errors,
@@ -26,6 +27,7 @@ BLUEPRINTS = (
     files.bp,
     activity.bp,
     calendar.bp,
+    assistant.bp,
     system.bp,
 )
 

@@ -3,8 +3,9 @@ from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from flask_mail import Mail
 
+from compis.application.assistant.service import Limits
 from compis.application.container import build_services
-from compis.application.ports import Clock, Mailer, PaymentGateway
+from compis.application.ports import Clock, LanguageModel, Mailer, PaymentGateway
 from compis.config import Settings
 from compis.domain.avatar import media_prefix
 from compis.infrastructure.adapters import (
@@ -25,6 +26,7 @@ def create_app(
     clock: Clock | None = None,
     mailer: Mailer | None = None,
     gateway: PaymentGateway | None = None,
+    model: LanguageModel | None = None,
 ) -> Flask:
     settings = settings or Settings.from_env()
     app = Flask(__name__)
@@ -68,6 +70,8 @@ def create_app(
         gateway,
         settings.paypal_demo_client_id,
         media_prefix(settings.cloudinary_cloud_name),
+        model,
+        Limits(settings.assistant_daily_limit, settings.assistant_global_daily_limit),
     )
     register_http(app)
     register_cli(app)

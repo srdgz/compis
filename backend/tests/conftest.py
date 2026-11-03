@@ -60,11 +60,16 @@ def gateway() -> FakeGateway:
 
 
 @pytest.fixture
-def app(clock, mailer, gateway):
+def model():
+    return None
+
+
+@pytest.fixture
+def app(clock, mailer, gateway, model):
     settings = Settings(
         testing=True, cron_secret="cron-secret", paypal_demo_client_id="demo-client"
     )
-    app = create_app(settings, clock=clock, mailer=mailer, gateway=gateway)
+    app = create_app(settings, clock=clock, mailer=mailer, gateway=gateway, model=model)
     with app.app_context():
         db.create_all()
         yield app

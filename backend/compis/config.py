@@ -41,6 +41,11 @@ class Settings:
     paypal_demo_client_id: str = ""
     paypal_demo_client_secret: str = ""
     cloudinary_cloud_name: str = ""
+    assistant_provider: str = "none"
+    gemini_api_key: str = ""
+    assistant_model: str = ""
+    assistant_daily_limit: int = 20
+    assistant_global_daily_limit: int = 200
     testing: bool = False
 
     @classmethod
@@ -65,4 +70,9 @@ class Settings:
             paypal_demo_client_id=os.getenv("PAYPAL_DEMO_CLIENT_ID", ""),
             paypal_demo_client_secret=os.getenv("PAYPAL_DEMO_CLIENT_SECRET", ""),
             cloudinary_cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME", ""),
+            assistant_provider=os.getenv("ASSISTANT_PROVIDER", "none").strip().lower(),
+            gemini_api_key=os.getenv("GEMINI_API_KEY", ""),
+            assistant_model=os.getenv("ASSISTANT_MODEL", ""),
+            assistant_daily_limit=int(os.getenv("ASSISTANT_DAILY_LIMIT", "20")),
+            assistant_global_daily_limit=int(os.getenv("ASSISTANT_GLOBAL_DAILY_LIMIT", "200")),
         )
