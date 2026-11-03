@@ -25,7 +25,7 @@ Success criteria:
 
 - A floating button ("Asistente", the label is translated when the app is) sits at the bottom right of every private page. It opens a drawer above the current view, so the user never leaves what they were doing. There is no new route and no nav entry.
 - Desktop and tablet (from 768 px): the drawer slides in from the right, 24 rem wide, full height, with a dimmed backdrop. Clicking the backdrop, pressing Esc or the close button closes it.
-- Phones (below 768 px): the drawer is a bottom sheet that rises from the bottom edge and covers the screen except for a small strip at the top, so it is clear it can be dismissed. It uses `100dvh`, so the on-screen keyboard never hides the input, and it respects the safe areas (notch and home indicator).
+- Phones (below 768 px): the drawer is a bottom sheet that rises from the bottom edge and covers the screen except for a small strip at the top, so it is clear it can be dismissed. It follows the visual viewport (falling back to `100dvh`), so the on-screen keyboard does not hide the input, and it respects the safe areas (notch and home indicator). Short landscape screens hide the privacy note to leave room for the conversation.
 - The floating button sits above the bottom navigation bar on phones and clears the safe area. It is hidden on the sign-in pages and while another dialog is open.
 - The drawer is a native modal `<dialog>`, like the app's other dialogs: focus is trapped, the page behind is inert, Esc closes it and focus returns to the floating button.
 - Empty state with four suggested questions as buttons: what do I owe, who owes me, what tasks do I have, what is on the shopping list.
@@ -143,6 +143,8 @@ Used when no provider is configured, when a provider call fails, or when the glo
 - First adapter: Google Gemini through its REST API with function calling, using `requests` (already a dependency). No SDK.
 - Configuration, all optional: `ASSISTANT_PROVIDER` (`gemini` or `none`), `GEMINI_API_KEY`, `ASSISTANT_MODEL`. The default model name is chosen at implementation time against the provider's current free-tier list, since free models change; it is never hardcoded in domain or application code.
 - No key means `none`: deterministic mode only.
+- The default model name (`gemini-3.5-flash-lite`) comes from the provider's pricing page at the time of writing and must be checked against a real key before relying on it. The adapter keeps the provider's raw model turns and echoes them back untouched, so fields it does not know about, such as thought signatures, survive the tool loop.
+- Google's terms for unpaid use say that submitted content may be used to improve its products and reviewed by people, and that in the EEA, Switzerland and the UK the paid-service data terms apply to API clients offered to users. Until that is settled, model mode is meant for local development and private demos, not for real users.
 - Request timeout of 6 seconds per model call and a 9 second budget per request, inside the current `maxDuration` of 10 in `vercel.json`. Raising it is only needed if answers prove slow.
 - The key is read in `config.py` and handled only by the adapter. It is never logged or returned.
 - Adapter tests use a mocked HTTP layer; no test calls the real API.
@@ -158,7 +160,7 @@ Used when no provider is configured, when a provider call fails, or when the glo
 ## 11. Accessibility
 
 - The floating button is a real button with an accessible name, a visible focus ring, and a target of at least 44 px. It never covers the bottom navigation or the safe area.
-- The drawer is a modal `<dialog>` with a title and a labelled close button. Focus moves into it when it opens (to the input) and returns to the floating button when it closes.
+- The drawer is a modal `<dialog>` with a title and a labelled close button. Focus moves into it when it opens (to the input with a mouse, to the title on touch screens so the keyboard does not pop up over the suggestions) and returns to the floating button when it closes.
 - Messages live in a container with `role="log"` and `aria-live="polite"`, so a new reply is announced once.
 - The input has a visible label, the send button has an accessible name, Enter sends and Shift+Enter adds a line.
 - Suggested questions are real buttons with at least a 24 px target.

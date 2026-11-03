@@ -45,6 +45,7 @@ Demo data is recreated every week. The interface is currently in Spanish.
 - **Payments between flatmates.** The debtor pays with PayPal.Me or in cash and reports it; the creditor confirms or rejects the payment. See below for why it works this way.
 - **Calendar and activity.** Tasks and due dates by month, plus a log of what happens in the home.
 - **Files.** Contracts, bills and receipts, uploaded to Cloudinary.
+- **Assistant.** A floating button opens a chat drawer where you ask what you owe, who owes you, which tasks are due and what is on the shopping list. It only reads your data.
 - **Daily email digest** of the home's activity.
 - **Installable app (PWA)** with a shell that works offline.
 - **Automatic, light or dark theme** and a layout that adapts to any screen.
@@ -85,6 +86,17 @@ PayPal always charges a merchant account, so it does not allow direct payments b
 
 - **Real payment: PayPal.Me, cash and confirmation.** Each person saves their [PayPal.Me](https://www.paypal.me) username. When paying, the app opens `paypal.me/username/amountEUR` with the amount already filled in. The debtor then reports the payment and the creditor confirms or rejects it. A debt goes through three states: pending, reported and settled. Nobody can settle their own debt without the creditor's confirmation.
 - **Demo mode: PayPal Sandbox.** If the server has Sandbox credentials, the payment dialog shows the PayPal buttons. The order is created and captured on the server, which only settles the debt when status, amount, currency and reference all match. The code only talks to the test environment, and the money is fake.
+
+## Assistant
+
+The assistant answers questions about what you have pending: debts, tasks and the shopping list. It is read-only by design: it has no way to create, change or pay anything.
+
+- **Facts come from the backend.** The language model does not compute or remember anything. It chooses among four read-only tools (`get_debts`, `get_tasks`, `get_shopping_list`, `get_today`) that call the same services as the rest of the app, with the signed-in user taken from the session. Totals and overdue flags are calculated in code. A test fails if a tool that writes is ever added.
+- **It works without a model.** With no provider configured, or when the provider fails or its quota runs out, the assistant answers with an automatic summary built from the same tools. That is the default, and it is what the tests and the demo use.
+- **Optional model: Gemini.** Set `ASSISTANT_PROVIDER=gemini` and `GEMINI_API_KEY` to let a Gemini model phrase the answers. The provider sits behind a port, so it can be replaced by changing one adapter.
+- **Language.** The client sends the interface language (`es` or `en`) with every request, and the assistant answers in the language the user writes in. Fixed messages come from a catalogue with the same keys in both languages.
+- **Limits.** 20 questions per person and 200 in total per day by default, stored in the database so they work on serverless. Over the global limit it falls back to the automatic summary.
+- **Privacy.** Conversations are not stored. Only first names, amounts, dates and the text of tasks and items are sent to the model, never emails, last names or identifiers. User-written text is treated as data, not as instructions. **Free tiers of model providers may use submitted content to improve their products, and their terms can restrict use in some regions.** Read the provider's terms before enabling a model for real users; the automatic summary sends nothing anywhere.
 
 ## Accessibility and responsive design
 
@@ -149,6 +161,8 @@ All of them are optional except `JWT_SECRET_KEY`.
 | `MAIL_SERVER`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_USE_TLS`, `MAIL_USE_SSL`, `MAIL_SENDER` | backend | Sending the daily digest |
 | `PAYPAL_DEMO_CLIENT_ID`, `PAYPAL_DEMO_CLIENT_SECRET` | backend | Demo mode with PayPal Sandbox |
 | `CLOUDINARY_CLOUD_NAME` | backend | Restricts images and files to your account |
+| `ASSISTANT_PROVIDER`, `GEMINI_API_KEY`, `ASSISTANT_MODEL` | backend | Optional language model for the assistant (`none` by default) |
+| `ASSISTANT_DAILY_LIMIT`, `ASSISTANT_GLOBAL_DAILY_LIMIT` | backend | Questions per person and in total per day (20 and 200) |
 | `VITE_API_URL` | frontend | API prefix. Defaults to `/api` |
 | `VITE_CLOUDINARY_CLOUD_NAME`, `VITE_CLOUDINARY_UPLOAD_PRESET` | frontend | Uploading pictures and files |
 
@@ -212,6 +226,7 @@ All routes live under `/api` and require a session except sign-in, `health`, `co
 | Demo payments | `POST /payments/paypal/orders`, `POST /payments/paypal/capture` |
 | Files | `GET /file/home/{id}`, `POST /file`, `DELETE /file/{id}` |
 | Activity and calendar | `GET /blog/home/{id}`, `GET /calendar/{id}` |
+| Assistant | `POST /assistant/messages` |
 | System | `GET /health`, `GET /config`, `GET /cron/digest` |
 
 ## Repository structure
