@@ -8,6 +8,8 @@ import { ToastProvider } from "@/shared/ui/Toast";
 
 import { AppRoutes } from "./routes";
 
+export const routerFuture = { v7_startTransition: true, v7_relativeSplatPath: true } as const;
+
 export function createQueryClient(): QueryClient {
   return new QueryClient({
     defaultOptions: {
@@ -40,7 +42,7 @@ export function Providers({
 export function App() {
   return (
     <Providers>
-      <BrowserRouter>
+      <BrowserRouter future={routerFuture}>
         <AppRoutes />
       </BrowserRouter>
     </Providers>

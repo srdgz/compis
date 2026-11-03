@@ -2,7 +2,7 @@ import { QueryClient } from "@tanstack/react-query";
 import { render } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 
-import { Providers } from "@/app/App";
+import { Providers, routerFuture } from "@/app/App";
 import { AppRoutes } from "@/app/routes";
 import { saveSession } from "@/shared/api/session";
 
@@ -11,7 +11,7 @@ export function renderApp(route = "/", signedIn = false) {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
     <Providers client={client}>
-      <MemoryRouter initialEntries={[route]}>
+      <MemoryRouter initialEntries={[route]} future={routerFuture}>
         <AppRoutes />
       </MemoryRouter>
     </Providers>,
