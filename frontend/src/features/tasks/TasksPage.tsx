@@ -15,6 +15,7 @@ import { Button } from "@/shared/ui/Button";
 import { ConfirmDialog, Dialog } from "@/shared/ui/Dialog";
 import { Badge, EmptyState, ErrorNotice, Loading, PageHeader } from "@/shared/ui/Feedback";
 import { Checkbox, SelectField, TextField } from "@/shared/ui/Field";
+import { LoadingDots } from "@/shared/ui/LoadingDots";
 import { useToast } from "@/shared/ui/Toast";
 
 import type { Task } from "./api";
@@ -102,7 +103,7 @@ function NewTaskDialog({
           <Button variant="ghost" onClick={onClose}>
             Cancelar
           </Button>
-          <Button type="submit" loading={create.isPending}>
+          <Button type="submit" loading={create.isPending} loadingLabel="Guardando">
             Crear tarea
           </Button>
         </div>
@@ -154,7 +155,7 @@ function RescheduleDialog({
           <Button variant="ghost" onClick={onClose}>
             Cancelar
           </Button>
-          <Button type="submit" loading={reschedule.isPending}>
+          <Button type="submit" loading={reschedule.isPending} loadingLabel="Guardando">
             Guardar fecha
           </Button>
         </div>
@@ -254,7 +255,11 @@ export function TasksPage() {
                     : "border-control bg-surface text-transparent hover:border-brand hover:text-brand",
                 )}
               >
-                <Check aria-hidden="true" size={22} />
+                {complete.isPending && complete.variables === task.id ? (
+                  <LoadingDots />
+                ) : (
+                  <Check aria-hidden="true" size={22} />
+                )}
               </button>
 
               <div className="flex min-w-0 flex-1 flex-col gap-1.5">

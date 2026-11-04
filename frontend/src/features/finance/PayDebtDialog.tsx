@@ -78,6 +78,7 @@ export function PayDebtDialog({ debt, creditor, onClose }: PayDebtDialogProps) {
                 <Button
                   variant="secondary"
                   loading={report.isPending}
+                  loadingLabel="Avisando"
                   onClick={() => reportAs("paypal_me")}
                 >
                   Ya he pagado con PayPal
@@ -94,7 +95,12 @@ export function PayDebtDialog({ debt, creditor, onClose }: PayDebtDialogProps) {
             <h3 id="pay-cash" className="text-lg">
               En efectivo u otro medio
             </h3>
-            <Button variant="secondary" loading={report.isPending} onClick={() => reportAs("cash")}>
+            <Button
+              variant="secondary"
+              loading={report.isPending}
+              loadingLabel="Avisando"
+              onClick={() => reportAs("cash")}
+            >
               Ya se lo he pagado
             </Button>
           </section>

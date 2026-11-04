@@ -16,7 +16,7 @@ export function RequireAuth() {
 
 export function HomeGate() {
   const { data: roomie, isPending, error } = useCurrentRoomie();
-  if (isPending) return <Loading />;
+  if (isPending) return <Loading variant="page" />;
   if (error || !roomie) return <ErrorNotice message={errorMessage(error)} />;
   if (roomie.home_id === null) return <OnboardingPage roomie={roomie} />;
   return <Outlet context={{ roomie, homeId: roomie.home_id } satisfies HomeContext} />;

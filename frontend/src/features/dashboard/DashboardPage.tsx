@@ -82,18 +82,21 @@ export function DashboardPage() {
           to="/tasks"
           icon={ListChecks}
           label="Tareas pendientes"
+          loading={tasks.isPending}
           value={tasks.data ? String(myPending.length) : "–"}
         />
         <StatTile
           to="/expenses"
           icon={TrendingDown}
           label="Debes"
+          loading={debts.isPending}
           value={debts.data ? formatEuro(owe) : "–"}
         />
         <StatTile
           to="/expenses"
           icon={TrendingUp}
           label="Te deben"
+          loading={debts.isPending}
           value={debts.data ? formatEuro(owed) : "–"}
           tone="brand"
           className="col-span-2 sm:col-span-1"
@@ -103,7 +106,7 @@ export function DashboardPage() {
       <div className="grid gap-6 lg:grid-cols-[3fr_2fr]">
         <div className="flex min-w-0 flex-col gap-6">
           <Card title="Tus próximas tareas" action={<SeeAll to="/tasks" label="Ver todas" />}>
-            {tasks.isPending && <Loading />}
+            {tasks.isPending && <Loading variant="compact" rows={2} />}
             {tasks.error && <ErrorNotice message="No se han podido cargar las tareas." />}
             {tasks.data && myPending.length === 0 && (
               <EmptyState title="Estás al día" icon={ListChecks}>
@@ -137,7 +140,7 @@ export function DashboardPage() {
             title="Lista de la compra"
             action={<SeeAll to="/shopping" label="Abrir la lista" />}
           >
-            {items.isPending && <Loading />}
+            {items.isPending && <Loading variant="compact" rows={1} notice={false} />}
             {items.data && items.data.length === 0 && (
               <EmptyState title="No falta nada" icon={ShoppingBasket}>
                 Cuando alguien apunte algo, aparecerá aquí.
@@ -162,7 +165,7 @@ export function DashboardPage() {
         </div>
 
         <Card title="Novedades" action={<SeeAll to="/activity" label="Ver todas" />}>
-          {activity.isPending && <Loading />}
+          {activity.isPending && <Loading variant="compact" rows={3} notice={false} />}
           {activity.data && activity.data.length === 0 && (
             <EmptyState title="Todo tranquilo">Aún no hay novedades.</EmptyState>
           )}

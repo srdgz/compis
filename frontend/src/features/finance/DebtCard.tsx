@@ -101,7 +101,7 @@ export function DebtCard({
 
       {!settled && perspective === "debtor" && !waiting && (
         <div>
-          <Button loading={busy} onClick={onPay}>
+          <Button loading={busy} loadingLabel="Pagando" onClick={onPay}>
             Pagar
           </Button>
         </div>
@@ -111,14 +111,14 @@ export function DebtCard({
       )}
       {!settled && perspective === "creditor" && !waiting && (
         <div>
-          <Button variant="secondary" loading={busy} onClick={onConfirm}>
+          <Button variant="secondary" loading={busy} loadingLabel="Confirmando" onClick={onConfirm}>
             Marcar como cobrada
           </Button>
         </div>
       )}
       {!settled && perspective === "creditor" && waiting && (
         <div className="flex flex-wrap gap-2">
-          <Button loading={busy} onClick={onConfirm}>
+          <Button loading={busy} loadingLabel="Confirmando" onClick={onConfirm}>
             Confirmar que lo he recibido
           </Button>
           <Button variant="danger" disabled={busy} onClick={onReject}>

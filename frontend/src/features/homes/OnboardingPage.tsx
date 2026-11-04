@@ -56,7 +56,7 @@ export function OnboardingPage({ roomie }: { roomie: Roomie }) {
               value={name}
               onChange={(event) => setName(event.target.value)}
             />
-            <Button type="submit" loading={createHome.isPending}>
+            <Button type="submit" loading={createHome.isPending} loadingLabel="Creando vivienda">
               Crear vivienda
             </Button>
           </form>

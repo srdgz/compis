@@ -55,6 +55,7 @@ export function FilesPage() {
             <Button
               disabled={!enabled}
               loading={upload.isPending}
+              loadingLabel="Subiendo"
               onClick={() => input.current?.click()}
             >
               <Upload aria-hidden="true" size={20} />

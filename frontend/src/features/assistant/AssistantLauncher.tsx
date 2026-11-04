@@ -6,6 +6,7 @@ import { errorMessage } from "@/shared/api/http";
 import { cx } from "@/shared/lib/format";
 import { Button } from "@/shared/ui/Button";
 import { ErrorNotice } from "@/shared/ui/Feedback";
+import { LoadingDots } from "@/shared/ui/LoadingDots";
 
 import { MAX_MESSAGE_LENGTH } from "./api";
 import type { ChatEntry } from "./api";
@@ -197,8 +198,12 @@ export function AssistantLauncher() {
             </ol>
           )}
           {chat.pending && (
-            <p className="assistant-thinking text-muted" role="status">
-              Pensando…
+            <p
+              role="status"
+              className="inline-flex w-fit items-center gap-2 rounded-2xl rounded-bl-md bg-mint px-4 py-3 text-ink"
+            >
+              Pensando
+              <LoadingDots />
             </p>
           )}
           {chat.error && (
@@ -236,7 +241,8 @@ export function AssistantLauncher() {
               type="submit"
               iconOnly
               aria-label="Enviar"
-              disabled={!draft.trim() || chat.pending}
+              loading={chat.pending}
+              disabled={!draft.trim()}
             >
               <Send aria-hidden="true" size={20} />
             </Button>
