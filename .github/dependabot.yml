@@ -2,22 +2,12 @@ version: 2
 
 updates:
   - package-ecosystem: pip
-    directory: /
-    schedule:
-      interval: weekly
-    open-pull-requests-limit: 3
-    groups:
-      python-dependencies:
-        patterns:
-          - "*"
-
-  - package-ecosystem: pip
     directory: /backend
     schedule:
       interval: weekly
     open-pull-requests-limit: 3
     groups:
-      python-dev-tooling:
+      python-dependencies:
         patterns:
           - "*"
 
@@ -42,6 +32,8 @@ updates:
       - dependency-name: eslint
         update-types: ["version-update:semver-major"]
       - dependency-name: "@eslint/js"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: typescript
         update-types: ["version-update:semver-major"]
     groups:
       frontend-dependencies:
