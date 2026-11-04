@@ -77,6 +77,7 @@ export function AvatarEditor({ roomie }: { roomie: Roomie }) {
               variant="secondary"
               disabled={!enabled}
               loading={busy}
+              loadingLabel="Subiendo"
               onClick={() => input.current?.click()}
             >
               <Camera aria-hidden="true" size={18} />

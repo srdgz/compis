@@ -24,7 +24,7 @@ export function ActivityPage() {
         title="Novedades"
         description="Lo último que ha pasado en la casa."
       />
-      {activity.isPending && <Loading />}
+      {activity.isPending && <Loading variant="people" rows={4} />}
       {activity.error && <ErrorNotice message={errorMessage(activity.error)} />}
       {activity.data && activity.data.length === 0 && (
         <EmptyState title="Todo tranquilo" icon={Newspaper}>

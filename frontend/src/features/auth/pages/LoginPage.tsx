@@ -4,9 +4,10 @@ import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 
 import { errorMessage } from "@/shared/api/http";
 import { DEMO_ACCOUNT } from "@/shared/config";
+import { useDelayed } from "@/shared/lib/useDelayed";
 import { useDocumentTitle } from "@/shared/lib/useDocumentTitle";
 import { Button } from "@/shared/ui/Button";
-import { ErrorNotice } from "@/shared/ui/Feedback";
+import { ErrorNotice, SLOW_LOADING_MESSAGE, SLOW_LOADING_MS } from "@/shared/ui/Feedback";
 import { PasswordField, TextField } from "@/shared/ui/Field";
 
 import { useAuth } from "../AuthProvider";
@@ -20,14 +21,15 @@ export function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [submitting, setSubmitting] = useState(false);
+  const [submitting, setSubmitting] = useState<"form" | "demo" | null>(null);
+  const slow = useDelayed(submitting !== null, SLOW_LOADING_MS);
 
   if (session) return <Navigate to="/" replace />;
 
   const destination = (location.state as { from?: string } | null)?.from ?? "/";
 
-  async function attempt(emailValue: string, passwordValue: string) {
-    setSubmitting(true);
+  async function attempt(kind: "form" | "demo", emailValue: string, passwordValue: string) {
+    setSubmitting(kind);
     setError(null);
     try {
       await signIn(emailValue, passwordValue);
@@ -35,13 +37,14 @@ export function LoginPage() {
     } catch (caught) {
       setError(errorMessage(caught));
     } finally {
-      setSubmitting(false);
+      setSubmitting(null);
     }
   }
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
-    void attempt(email, password);
+    if (submitting) return;
+    void attempt("form", email, password);
   }
 
   return (
@@ -63,18 +66,30 @@ export function LoginPage() {
           value={password}
           onChange={(event) => setPassword(event.target.value)}
         />
-        <Button type="submit" loading={submitting}>
+        <Button
+          type="submit"
+          loading={submitting === "form"}
+          loadingLabel="Entrando"
+          disabled={submitting === "demo"}
+        >
           Entrar
         </Button>
       </form>
       <div className="flex flex-col gap-4 border-t border-line pt-6">
         <Button
           variant="secondary"
-          disabled={submitting}
-          onClick={() => void attempt(DEMO_ACCOUNT.email, DEMO_ACCOUNT.password)}
+          loading={submitting === "demo"}
+          loadingLabel="Entrando"
+          disabled={submitting === "form"}
+          onClick={() => void attempt("demo", DEMO_ACCOUNT.email, DEMO_ACCOUNT.password)}
         >
-          Probar con una cuenta de demostración
+          Probar con una cuenta demo
         </Button>
+        {slow && (
+          <p role="status" className="text-center text-sm text-muted">
+            {SLOW_LOADING_MESSAGE}
+          </p>
+        )}
         <p className="text-center">
           ¿Aún no tienes cuenta?{" "}
           <Link to="/signup" className="font-semibold text-brand underline">

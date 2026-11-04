@@ -113,7 +113,7 @@ export function SignupPage() {
           error={errors.confirm}
           onChange={(event) => setConfirm(event.target.value)}
         />
-        <Button type="submit" loading={submitting}>
+        <Button type="submit" loading={submitting} loadingLabel="Creando cuenta">
           Crear cuenta
         </Button>
       </form>

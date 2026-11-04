@@ -44,7 +44,7 @@ export function RoomiesPage() {
     <>
       <PageHeader eyebrow="Hogar" title="Compis" description="Las personas que vivís en la casa." />
 
-      {roomies.isPending && <Loading />}
+      {roomies.isPending && <Loading variant="people" rows={3} />}
       {roomies.error && <ErrorNotice message={errorMessage(roomies.error)} />}
 
       <ul className="grid gap-4 sm:grid-cols-2">
@@ -91,7 +91,7 @@ export function RoomiesPage() {
               onChange={(event) => setEmail(event.target.value)}
             />
             <div>
-              <Button type="submit" loading={add.isPending}>
+              <Button type="submit" loading={add.isPending} loadingLabel="Añadiendo">
                 <UserPlus aria-hidden="true" size={18} />
                 Añadir compi
               </Button>

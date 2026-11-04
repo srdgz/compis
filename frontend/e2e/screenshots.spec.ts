@@ -22,7 +22,7 @@ async function save(page: Page, name: string): Promise<void> {
 
 async function demoLogin(page: Page): Promise<void> {
   await page.goto("/login");
-  await page.getByRole("button", { name: "Probar con una cuenta de demostración" }).click();
+  await page.getByRole("button", { name: "Probar con una cuenta demo" }).click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Hola, Lucía");
 }
 

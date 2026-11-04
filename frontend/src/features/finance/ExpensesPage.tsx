@@ -106,7 +106,7 @@ function ShareDialog({
           <Button variant="ghost" onClick={onClose}>
             Cancelar
           </Button>
-          <Button type="submit" loading={createDebts.isPending}>
+          <Button type="submit" loading={createDebts.isPending} loadingLabel="Repartiendo">
             Repartir gasto
           </Button>
         </div>
@@ -182,7 +182,7 @@ export function ExpensesPage() {
       )}
 
       <Card title="Gastos por repartir">
-        {expenses.isPending && <Loading />}
+        {expenses.isPending && <Loading rows={2} />}
         {expenses.error && <ErrorNotice message={errorMessage(expenses.error)} />}
         {expenses.data && expenses.data.length === 0 && (
           <EmptyState title="No tienes gastos pendientes de repartir" icon={Receipt}>
@@ -207,7 +207,7 @@ export function ExpensesPage() {
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card title="Debes">
-          {debts.isPending && <Loading />}
+          {debts.isPending && <Loading rows={2} />}
           {debts.error && <ErrorNotice message={errorMessage(debts.error)} />}
           {debts.data && iOwe.length === 0 && <EmptyState title="No debes nada" />}
           <ul className="flex flex-col gap-3">
@@ -227,7 +227,7 @@ export function ExpensesPage() {
           </ul>
         </Card>
         <Card title="Te deben">
-          {debts.isPending && <Loading />}
+          {debts.isPending && <Loading rows={2} />}
           {debts.data && owedToMe.length === 0 && <EmptyState title="Nadie te debe nada" />}
           <ul className="flex flex-col gap-3">
             {owedToMe.map((debt) => (

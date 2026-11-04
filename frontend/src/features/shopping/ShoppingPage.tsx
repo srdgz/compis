@@ -69,7 +69,7 @@ function PurchaseDialog({
           <Button variant="ghost" onClick={onClose}>
             Cancelar
           </Button>
-          <Button type="submit" loading={createExpense.isPending}>
+          <Button type="submit" loading={createExpense.isPending} loadingLabel="Registrando">
             Registrar compra
           </Button>
         </div>
@@ -134,7 +134,12 @@ export function ShoppingPage() {
             onChange={(event) => setNewItem(event.target.value)}
           />
         </div>
-        <Button type="submit" loading={addItem.isPending} disabled={listId === undefined}>
+        <Button
+          type="submit"
+          loading={addItem.isPending}
+          loadingLabel="Añadiendo"
+          disabled={listId === undefined}
+        >
           <Plus aria-hidden="true" size={20} />
           Añadir
         </Button>

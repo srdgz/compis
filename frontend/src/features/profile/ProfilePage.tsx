@@ -95,7 +95,7 @@ function ProfileForm({ roomie }: { roomie: Roomie }) {
           onChange={(event) => setPassword(event.target.value)}
         />
         <div>
-          <Button type="submit" loading={update.isPending}>
+          <Button type="submit" loading={update.isPending} loadingLabel="Guardando">
             Guardar cambios
           </Button>
         </div>
@@ -152,7 +152,7 @@ export function ProfilePage() {
   return (
     <>
       <PageHeader eyebrow="Cuenta" title="Mi perfil" />
-      {isPending && <Loading />}
+      {isPending && <Loading rows={2} />}
       {error && <ErrorNotice message={errorMessage(error)} />}
       {roomie && (
         <div className="flex flex-col gap-6">
